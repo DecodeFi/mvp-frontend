@@ -5,6 +5,6 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   ssr: {
-    noExternal: ["react-force-graph"],
+    noExternal: ["react-force-graph-2d"],
   },
 });
