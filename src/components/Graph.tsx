@@ -23,10 +23,9 @@ export function Graph({ nodes, edges, highlightNodeId }: Props) {
   const graphRef = useRef<ForceGraphMethods>(undefined);
 
   useEffect(() => {
-    if (graphRef.current) {
-      // доступ к d3-force link
-      graphRef.current.d3Force("link")?.distance(100);
-    }
+    if (!graphRef.current) return;
+
+    graphRef.current.d3Force("link")?.distance(200);
   }, []);
   return (
     <div>
