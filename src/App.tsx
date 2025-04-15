@@ -7,15 +7,19 @@ import {
 
 function App() {
   const [highlightNodeId, setHighlightNodeId] = useState("");
-  useEffect(() => {
-    const hey = async () => {
-      const fetchedBlock = await fetch(
-        "https://51.250.109.234:3443/api/lookup?block=22261635",
-      );
-      console.log(fetchedBlock, "fetchedBlock");
-    };
-    hey();
-  }, []);
+  const [fromFilter, setFromFilter] = useState("");
+  const [toFilter, setToFilter] = useState("");
+  const [actionFilter, setActionFilter] = useState("");
+
+  // useEffect(() => {
+  //   const hey = async () => {
+  //     const fetchedBlock = await fetch(
+  //       "https://51.250.109.234:3443/api/lookup?block=22261635",
+  //     );
+  //     console.log(fetchedBlock, "fetchedBlock");
+  //   };
+  //   hey();
+  // }, []);
   const sampleData = [
     {
       hash: "0x9bbc6fd8fa80a3dc0bb87ad319f723f8132729bd29d918784f74756deeec9437",
@@ -2434,27 +2438,31 @@ function App() {
       action: "call",
     },
   ];
+  const filteredData = sampleData.filter((tx) => {
+    return (
+      (!fromFilter || tx.from.includes(fromFilter)) &&
+      (!toFilter || tx.to.includes(toFilter)) &&
+      (!actionFilter || tx.action === actionFilter)
+    );
+  });
 
   function buildGraphFromData(data) {
-    const nodesMap = new Map<string, { id: string; color?: string }>();
-    const edges: { source: string; target: string; label: string }[] = [];
+    const nodesMap = new Map();
+    const edges = [];
 
     for (const tx of data) {
       const { from, to, storage, action, hash } = tx;
 
-      // Добавим все ноды
       [from, to, storage].forEach((addr) => {
         if (!nodesMap.has(addr)) nodesMap.set(addr, { id: addr });
       });
 
-      // Основной edge: from → to
       edges.push({
         source: from,
         target: to,
         label: `${action} (${hash.slice(0, 8)}…)`,
       });
 
-      // Доп. edge: storage → to при delegate_call
       if (action === "delegate_call") {
         edges.push({
           source: storage,
@@ -2470,15 +2478,33 @@ function App() {
     };
   }
 
-  const { nodes, edges } = buildGraphFromData(sampleData);
+  const { nodes, edges } = buildGraphFromData(filteredData);
   return (
-    <div>
-      <input
-        placeholder="Enter address to highlight"
-        onChange={(e) => setHighlightNodeId(e.target.value.trim())}
-        style={{ marginBottom: "1rem", padding: "8px", width: "400px" }}
-      />
-      <Graph nodes={nodes} edges={edges} highlightNodeId={highlightNodeId} />
+    <div style={{ padding: "1rem" }}>
+      <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
+        <input
+          placeholder="Search from"
+          value={fromFilter}
+          onChange={(e) => setFromFilter(e.target.value)}
+          style={{ padding: "8px", width: "200px" }}
+        />
+        <input
+          placeholder="Search to"
+          value={toFilter}
+          onChange={(e) => setToFilter(e.target.value)}
+          style={{ padding: "8px", width: "200px" }}
+        />
+        <select
+          value={actionFilter}
+          onChange={(e) => setActionFilter(e.target.value)}
+          style={{ padding: "8px" }}
+        >
+          <option value="">All actions</option>
+          <option value="call">call</option>
+          <option value="delegate_call">delegate_call</option>
+        </select>
+      </div>
+      <Graph nodes={nodes} edges={edges} />
     </div>
   );
 }
