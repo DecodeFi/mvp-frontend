@@ -15,7 +15,11 @@
 }
 
 .graphContainer {
-    border: 1px solid var(--border)
+    border: 1px solid var(--border);
+    max-width: 1000vw;
+    max-height: 1000vh;
+    width: 50vw;
+    height: 50vh
 }
 
 .filters {

@@ -9,6 +9,14 @@ import {
 import { Header } from "./components/Header";
 import { SearchBar } from "./components/SearchBar";
 import { skipToken } from "@reduxjs/toolkit/query";
+import { ReactFlow } from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+
+const initialNodes = [
+  { id: "1", position: { x: 0, y: 0 }, data: { label: "1" } },
+  { id: "2", position: { x: 0, y: 100 }, data: { label: "2" } },
+];
+const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
 
 function detectSearchType(value: string) {
   if (!value) return null;
@@ -165,7 +173,8 @@ function App() {
           </select>
         </div>
         <div className={css.graphContainer}>
-          {rawData && <Graph nodes={nodes} edges={edges} />}
+          <ReactFlow nodes={initialNodes} edges={initialEdges} />
+          <style>{`.react-flow__attribution { display: none !important; }`}</style>
         </div>
       </div>
     </div>
