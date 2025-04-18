@@ -1,24 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import css from "./App.module.css";
-import { Graph } from "./components/Graph";
-import {
-  useGetAddressQuery,
-  useGetLatestBlockNumberQuery,
-  useGetTxsQuery,
-} from "../backend/apiSlice";
 import { Header } from "./components/Header";
-import { SearchBar } from "./components/SearchBar";
-import { skipToken } from "@reduxjs/toolkit/query";
-import { ReactFlow } from "@xyflow/react";
+import { CustomNode } from "./components/CustomNode";
 import "@xyflow/react/dist/style.css";
+import { ReactFlow } from "@xyflow/react";
 
-const initialNodes = [
-  { id: "1", position: { x: 0, y: 0 }, data: { label: "1" } },
-  { id: "2", position: { x: 0, y: 100 }, data: { label: "2" } },
-];
-const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
-
-function detectSearchType(value: string) {
+function detectSearchType(value) {
   if (!value) return null;
   if (value.startsWith("0x") && value.length === 66) return "tx";
   if (value.startsWith("0x") && value.length === 42) return "address";
@@ -26,156 +13,102 @@ function detectSearchType(value: string) {
   return null;
 }
 
-function App() {
-  const [highlightNodeId, setHighlightNodeId] = useState("");
-  const [fromFilter, setFromFilter] = useState("");
-  const [toFilter, setToFilter] = useState("");
-  const [actionFilter, setActionFilter] = useState("");
-  const [searchInput, setSearchInput] = useState("");
-  const [searchValue, setSearchValue] = useState("");
-  const searchType = detectSearchType(searchValue);
-  const { data: blockData, isLoading: isLoadingBLockData } =
-    useGetLatestBlockNumberQuery(
-      searchType === "block" ? searchValue : skipToken,
-    );
+const nodeTypes = {
+  custom: CustomNode,
+};
 
-  const { data: txDataRaw, isLoading: isLoadingTxDataRaw } = useGetTxsQuery(
-    searchType === "tx" ? searchValue : skipToken,
-  );
+function buildGraphFromData(data) {
+  if (!data) return { nodes: [], edges: [] };
 
-  const { data: addressDataRaw, isLoading: isLoadingAddressDataRaw } =
-    useGetAddressQuery(searchType === "address" ? searchValue : skipToken);
-  useEffect(() => {
-    const hey = async () => {
-      const fetchedBlock = await fetch(
-        "https://51.250.109.234:3443/api/lookup?block=12423434",
-      );
-      console.log(fetchedBlock, "fetchedBlock");
-    };
-    hey();
-  }, []);
-  const parsedTxData = useMemo(() => {
-    try {
-      if (txDataRaw?.result) return JSON.parse(txDataRaw.result);
-    } catch (e) {
-      console.error("Failed to parse txDataRaw", e);
-    }
-    return [];
-  }, [txDataRaw]);
+  const nodesMap = new Map();
+  const edges = [];
 
-  const parsedAddressData = useMemo(() => {
-    try {
-      if (addressDataRaw?.result) return JSON.parse(addressDataRaw.result);
-    } catch (e) {
-      console.error("Failed to parse addressDataRaw", e);
-    }
-    return [];
-  }, [addressDataRaw]);
-  const rawData =
-    searchType === "block"
-      ? blockData
-      : searchType === "tx"
-        ? parsedTxData
-        : searchType === "address"
-          ? parsedAddressData
-          : [];
-  const sampleData = [
-    {
-      hash: "0x9bbc6fd8fa80a3dc0bb87ad319f723f8132729bd29d918784f74756deeec9437",
-      from: "0x804abde86c3ecc4eb738c452a4cf129e151c3014",
-      to: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
-      storage: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
-      value: "0x3e5500",
-      action: "call",
-    },
-  ];
-
-  const filteredData = rawData?.filter((tx) => {
-    return (
-      (!fromFilter || tx.from.includes(fromFilter)) &&
-      (!toFilter || tx.to.includes(toFilter)) &&
-      (!actionFilter || tx.action === actionFilter)
-    );
-  });
-
-  function buildGraphFromData(data) {
-    if (!data) {
-      return {
-        nodes: [],
-        edges: [],
-      };
-    }
-    const nodesMap = new Map();
-    const edges = [];
-
-    for (const tx of data) {
-      const { from, to, storage, action, hash } = tx;
-
-      [from, to, storage].forEach((addr) => {
-        if (!nodesMap.has(addr)) nodesMap.set(addr, { id: addr });
-      });
-
-      edges.push({
-        source: from,
-        target: to,
-        label: `${action} (${hash.slice(0, 8)}…)`,
-      });
-
-      if (action === "delegate_call") {
-        edges.push({
-          source: storage,
-          target: to,
-          label: `delegate_ref (${hash.slice(0, 8)}…)`,
+  for (const tx of data) {
+    const { from, to, storage, action, hash } = tx;
+    [from, to, storage].forEach((addr) => {
+      if (!nodesMap.has(addr))
+        nodesMap.set(addr, {
+          id: addr,
+          type: "custom",
+          data: { label: addr },
+          dragHandle: ".drag-handle",
+          position: { x: Math.random() * 400, y: Math.random() * 400 },
         });
-      }
-    }
+    });
 
-    return {
-      nodes: Array.from(nodesMap.values()),
-      edges,
-    };
+    edges.push({
+      id: `${from}-${to}-${hash}`,
+      source: from,
+      target: to,
+      label: `${action} (${hash.slice(0, 8)}…)`,
+    });
+
+    if (action === "delegate_call") {
+      edges.push({
+        id: `${storage}-${to}-${hash}`,
+        source: storage,
+        target: to,
+        label: `delegate_ref (${hash.slice(0, 8)}…)`,
+      });
+    }
   }
 
-  const { nodes, edges } = buildGraphFromData(filteredData);
+  return {
+    nodes: Array.from(nodesMap.values()),
+    edges,
+  };
+}
+
+const sampleData = [
+  {
+    hash: "0x9bbc6fd8fa80a3dc0bb87ad319f723f8132729bd29d918784f74756deeec9437",
+    from: "0x804abde86c3ecc4eb738c452a4cf129e151c3014",
+    to: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
+    storage: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
+    value: "0x3e5500",
+    action: "call",
+  },
+  {
+    hash: "0x9bbc6fd8fa80a3dc0bb87ad319f723f8132729bd29d918784f74756deeec9437",
+    from: "0x804abde86c3ecc4eb738c452a4cf129e151c3014",
+    to: "0x32ec7980b487e4c7142e883fc12aa11905af552f",
+    storage: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
+    value: "0x3e5500",
+    action: "delegate_call",
+  },
+  {
+    hash: "0x9bbc6fd8fa80a3dc0bb87ad319f723f8132729bd29d918784f74756deeec9437",
+    from: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
+    to: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    storage: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    value: "0x0",
+    action: "call",
+  },
+  {
+    hash: "0x9bbc6fd8fa80a3dc0bb87ad319f723f8132729bd29d918784f74756deeec9437",
+    from: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
+    to: "0x43506849d7c04f9138d1a2050bbf3a0c054402dd",
+    storage: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    value: "0x0",
+    action: "delegate_call",
+  },
+];
+
+function App() {
+  const { nodes, edges } = buildGraphFromData(sampleData);
+
   return (
     <div className={css.container}>
       <Header />
-      <SearchBar
-        value={searchInput}
-        onChange={(e) => setSearchInput(e.target.value)}
-        onSubmit={() => setSearchValue(searchInput)}
-      />
-      {(isLoadingBLockData ||
-        isLoadingAddressDataRaw ||
-        isLoadingTxDataRaw) && <div>loading...</div>}
-      <div>
-        <div style={{ marginBottom: "1rem", display: "flex", gap: "1rem" }}>
-          <input
-            placeholder="Search from"
-            value={fromFilter}
-            onChange={(e) => setFromFilter(e.target.value)}
-            className={css.filters}
-          />
-          <input
-            placeholder="Search to"
-            value={toFilter}
-            onChange={(e) => setToFilter(e.target.value)}
-            className={css.filters}
-          />
-          <select
-            value={actionFilter}
-            onChange={(e) => setActionFilter(e.target.value)}
-            className={css.filters}
-          >
-            <option value="">All actions</option>
-            <option value="call">call</option>
-            <option value="delegate_call">delegate_call</option>
-          </select>
-        </div>
-        <div className={css.graphContainer}>
-          <ReactFlow nodes={initialNodes} edges={initialEdges} />
-          <style>{`.react-flow__attribution { display: none !important; }`}</style>
-        </div>
+      <div className={css.graphContainer} style={{ height: 600 }}>
+        <style>{`.react-flow__attribution { display: none !important; }`}</style>
+        <ReactFlow
+          nodesDraggable
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          fitView
+        />
       </div>
     </div>
   );
