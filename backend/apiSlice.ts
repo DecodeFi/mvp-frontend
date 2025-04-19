@@ -15,7 +15,7 @@ export const blockApi = createApi({
       }[],
       string
     >({
-      query: (blockNumber) => `/api/lookup?block=${blockNumber}`,
+      query: (blockNumber) => `/api/lookup?block=22261635`,
     }),
     getTxs: builder.query<
       {
