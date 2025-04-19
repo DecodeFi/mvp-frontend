@@ -22,34 +22,64 @@ function detectSearchType(value) {
 const nodeTypes = {
   nodeHeaderNode: NodeHeaderComponent,
 };
-const defaultNodes = [
-  {
-    id: "1",
-    type: "nodeHeaderNode",
-    position: { x: 200, y: 200 },
-    data: {},
-  },
-];
 
 function buildGraphFromData(data) {
   if (!data) return { nodes: [], edges: [] };
 
   const nodesMap = new Map();
+  const positionsMap = new Map();
   const edges = [];
+
+  let yOffsetFrom = 0;
+  let yOffsetTo = 0;
+  const yStep = 160;
 
   for (const tx of data) {
     const { from, to, storage, action, hash } = tx;
-    [from, to, storage].forEach((addr) => {
-      if (!nodesMap.has(addr))
-        nodesMap.set(addr, {
-          id: addr,
-          type: "nodeHeaderNode",
-          data: { label: addr },
-          dragHandle: ".drag-handle",
-          position: { x: Math.random() * 400, y: Math.random() * 400 },
-        });
-    });
 
+    // Assign from node
+    if (!nodesMap.has(from)) {
+      const yFrom = yOffsetFrom * yStep;
+      positionsMap.set(from, { x: 30, y: yFrom });
+      nodesMap.set(from, {
+        id: from,
+        type: "nodeHeaderNode",
+        data: { label: from },
+        dragHandle: ".drag-handle",
+        position: positionsMap.get(from),
+      });
+      yOffsetFrom += 1;
+    }
+
+    // Assign to node
+    if (!nodesMap.has(to)) {
+      const yTo = yOffsetTo * yStep;
+      positionsMap.set(to, { x: 400, y: yTo });
+      nodesMap.set(to, {
+        id: to,
+        type: "nodeHeaderNode",
+        data: { label: to },
+        dragHandle: ".drag-handle",
+        position: positionsMap.get(to),
+      });
+      yOffsetTo += 1;
+    }
+
+    // Assign storage node if needed
+    if (action === "delegate_call" && !nodesMap.has(storage)) {
+      const yStorage = (yOffsetTo + 1) * yStep;
+      positionsMap.set(storage, { x: 250, y: yStorage });
+      nodesMap.set(storage, {
+        id: storage,
+        type: "nodeHeaderNode",
+        data: { label: storage },
+        dragHandle: ".drag-handle",
+        position: positionsMap.get(storage),
+      });
+      yOffsetTo += 1;
+    }
+
+    // Edge: from -> to
     edges.push({
       id: `${from}-${to}-${hash}`,
       source: from,
@@ -57,6 +87,7 @@ function buildGraphFromData(data) {
       label: `${action} (${hash.slice(0, 8)}…)`,
     });
 
+    // Edge: storage -> to if delegate_call
     if (action === "delegate_call") {
       edges.push({
         id: `${storage}-${to}-${hash}`,
@@ -78,6 +109,38 @@ const sampleData = [
     hash: "0x9bbc6fd8fa80a3dc0bb87ad319f723f8132729bd29d918784f74756deeec9437",
     from: "0x804abde86c3ecc4eb738c452a4cf129e151c3014",
     to: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
+    storage: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
+    value: "0x3e5500",
+    action: "call",
+  },
+  {
+    hash: "0x9bbc6fd8fa80a3dc0bb87ad319f723f8132729bd29d918784f74756deeec9437",
+    from: "0x804abde86c3ecc4eb738c452a4cf129e151c3014",
+    to: "dadsda",
+    storage: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
+    value: "0x3e5500",
+    action: "call",
+  },
+  {
+    hash: "0x9bbc6fd8fa80a3dc0bb87ad319f723f8132729bd29d918784f74756deeec9437",
+    from: "0x804abde86c3ecc4eb738c452a4cf129e151c3014",
+    to: "dadaaaaaasda",
+    storage: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
+    value: "0x3e5500",
+    action: "call",
+  },
+  {
+    hash: "0x9bbc6fd8fa80a3dc0bb87ad319f723f8132729bd29d918784f74756deeec9437",
+    from: "dadaaaaaasda",
+    to: "ффффффф",
+    storage: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
+    value: "0x3e5500",
+    action: "call",
+  },
+  {
+    hash: "0x9bbc6fd8fa80a3dc0bb87ad319f723f8132729bd29d918784f74756deeec9437",
+    from: "уууу",
+    to: "фффффуккфф",
     storage: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
     value: "0x3e5500",
     action: "call",

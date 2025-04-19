@@ -1,5 +1,4 @@
 import { useState } from "react";
-import TurndownService from "turndown";
 
 import { Copy, Check } from "lucide-react";
 
@@ -27,7 +26,6 @@ export function CopyButton({
         return;
       }
 
-      const htmlContent = html || htmlRef?.current?.innerHTML || "";
       let textContent = text ?? "";
 
       await navigator.clipboard.writeText(textContent);
