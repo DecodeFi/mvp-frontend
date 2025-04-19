@@ -1,9 +1,15 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import css from "./App.module.css";
 import { Header } from "./components/Header";
-import { CustomNode } from "./components/CustomNode";
 import "@xyflow/react/dist/style.css";
-import { ReactFlow } from "@xyflow/react";
+import {
+  applyEdgeChanges,
+  applyNodeChanges,
+  Background,
+  ReactFlow,
+} from "@xyflow/react";
+import NodeHeaderComponent from "@/components/graph-nodes/NodeHeaderComponent";
+import { SearchBar } from "@/components/SearchBar";
 
 function detectSearchType(value) {
   if (!value) return null;
@@ -14,8 +20,16 @@ function detectSearchType(value) {
 }
 
 const nodeTypes = {
-  custom: CustomNode,
+  nodeHeaderNode: NodeHeaderComponent,
 };
+const defaultNodes = [
+  {
+    id: "1",
+    type: "nodeHeaderNode",
+    position: { x: 200, y: 200 },
+    data: {},
+  },
+];
 
 function buildGraphFromData(data) {
   if (!data) return { nodes: [], edges: [] };
@@ -29,7 +43,7 @@ function buildGraphFromData(data) {
       if (!nodesMap.has(addr))
         nodesMap.set(addr, {
           id: addr,
-          type: "custom",
+          type: "nodeHeaderNode",
           data: { label: addr },
           dragHandle: ".drag-handle",
           position: { x: Math.random() * 400, y: Math.random() * 400 },
@@ -68,47 +82,57 @@ const sampleData = [
     value: "0x3e5500",
     action: "call",
   },
-  {
-    hash: "0x9bbc6fd8fa80a3dc0bb87ad319f723f8132729bd29d918784f74756deeec9437",
-    from: "0x804abde86c3ecc4eb738c452a4cf129e151c3014",
-    to: "0x32ec7980b487e4c7142e883fc12aa11905af552f",
-    storage: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
-    value: "0x3e5500",
-    action: "delegate_call",
-  },
-  {
-    hash: "0x9bbc6fd8fa80a3dc0bb87ad319f723f8132729bd29d918784f74756deeec9437",
-    from: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
-    to: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-    storage: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-    value: "0x0",
-    action: "call",
-  },
-  {
-    hash: "0x9bbc6fd8fa80a3dc0bb87ad319f723f8132729bd29d918784f74756deeec9437",
-    from: "0xa69babef1ca67a37ffaf7a485dfff3382056e78c",
-    to: "0x43506849d7c04f9138d1a2050bbf3a0c054402dd",
-    storage: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-    value: "0x0",
-    action: "delegate_call",
-  },
 ];
 
 function App() {
   const { nodes, edges } = buildGraphFromData(sampleData);
+  const [fromFilter, setFromFilter] = useState("");
+  const [toFilter, setToFilter] = useState("");
+  const [actionFilter, setActionFilter] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [searchValue, setSearchValue] = useState("");
+  const searchType = detectSearchType(searchValue);
 
+  const filteredData = sampleData.filter((tx) => {
+    return (
+      (!fromFilter || tx.from.includes(fromFilter)) &&
+      (!toFilter || tx.to.includes(toFilter)) &&
+      (!actionFilter || tx.action === actionFilter)
+    );
+  });
+  const [nodes_, setNodes] = useState(nodes);
+  const [edges_, setEdges] = useState(edges);
+
+  const onNodesChange = useCallback(
+    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    [],
+  );
+  const onEdgesChange = useCallback(
+    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    [],
+  );
   return (
     <div className={css.container}>
       <Header />
+      <SearchBar
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
+        onSubmit={() => setSearchValue(searchInput)}
+      />
       <div className={css.graphContainer} style={{ height: 600 }}>
         <style>{`.react-flow__attribution { display: none !important; }`}</style>
+        <style>{`.react-flow__node {user-select: text !important;}`}</style>
+        <style>{`.react-flow__node.draggable {cursor: default !important;}`}</style>
         <ReactFlow
-          nodesDraggable
-          nodes={nodes}
-          edges={edges}
+          onEdgesChange={onEdgesChange}
+          onNodesChange={onNodesChange}
+          nodes={nodes_}
+          edges={edges_}
           nodeTypes={nodeTypes}
           fitView
-        />
+        >
+          <Background />
+        </ReactFlow>
       </div>
     </div>
   );
