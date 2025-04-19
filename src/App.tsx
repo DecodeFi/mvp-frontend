@@ -127,7 +127,7 @@ function App() {
   useEffect(() => {
     setNodes(nodes);
     setEdges(edges);
-  }, [blockData]);
+  }, [blockData, fromFilter, toFilter, actionFilter]);
   const [nodes_, setNodes] = useState(nodes);
   const [edges_, setEdges] = useState(edges);
 
