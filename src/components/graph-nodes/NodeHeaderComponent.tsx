@@ -15,10 +15,8 @@ import {
   NodeHeaderTitle,
 } from "@/components/graph-nodes/NodeHeader"
 import { BaseNode } from "@/components/graph-nodes/BaseNode"
-import { Copy } from "lucide-react"
 import { CopyButton } from "@/components/ui/CopyButton"
 import { truncateAddress } from "@/helpers/truncateAddress"
-import { AddressFilter } from "@/components/graph-filters/AddressFilter"
 
 const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
   return (

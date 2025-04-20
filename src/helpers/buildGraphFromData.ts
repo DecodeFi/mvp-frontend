@@ -10,7 +10,14 @@ export function buildGraphFromData(data) {
   const yStep = 160
 
   for (const tx of data) {
-    const { from_addr: from, to_addr: to, storage_addr: storage, action, tx_hash: hash } = tx
+    const {
+      from_addr: from,
+      to_addr: to,
+      storage_addr: storage,
+      action,
+      tx_hash: hash,
+      trace_id,
+    } = tx
 
     // Assign from node
     if (!nodesMap.has(from)) {
