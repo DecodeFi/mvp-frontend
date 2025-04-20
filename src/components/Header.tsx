@@ -12,11 +12,9 @@ export const Header = () => {
     >
       <p
         style={{
-          fontFamily: "Inter, sans-serif",
-          fontWeight: 700,
-          fontSize: "24px",
-          color: "#FCEEEF",
-
+          fontSize: "48px",
+          color: "#FF0071",
+          fontWeight: "bold",
           padding: "8px 16px",
           borderRadius: "12px",
           letterSpacing: "0.5px",

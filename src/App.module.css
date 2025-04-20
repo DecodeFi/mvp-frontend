@@ -9,6 +9,7 @@
     display: flex;
     justify-content: center;
     flex-direction: column;
+    width: 100%;
     gap: 4rem;
     max-width: 89rem;
     padding: 5rem;
@@ -18,8 +19,8 @@
     border: 1px solid var(--border);
     max-width: 1000vw;
     max-height: 1000vh;
-    width: 50vw;
-    height: 50vh
+    width: 70vw;
+    height: 70vh
 }
 
 .filters {
@@ -33,3 +34,10 @@
     padding: 0 16px;
     gap: 8px;
 }
+
+.addressFilter {
+    background-color: white;
+    border: 1px solid gray;
+
+}
+

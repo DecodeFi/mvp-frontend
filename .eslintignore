@@ -1,0 +1,7 @@
+/.git
+node_modules
+.next
+__test__
+next.config.js
+lib/@entangle_protocol
+lib/EntangleBlockchain/EntangleBlockchain.ts

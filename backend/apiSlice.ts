@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 
 export const blockApi = createApi({
   reducerPath: "blockApi",
@@ -6,41 +6,38 @@ export const blockApi = createApi({
   endpoints: (builder) => ({
     getLatestBlockNumber: builder.query<
       {
-        hash: string;
-        from: string;
-        to: string;
-        storage: string;
-        value: string;
-        action: string;
+        block_number: number
+        tx_hash: string
+        from_addr: string
+        to_addr: string
+        storage_addr: string
+        value: string
+        action: string
       }[],
       string
     >({
-      query: (blockNumber) => `/api/lookup?block=${blockNumber}`,
+      query: (blockNumber) => `api/trace?block=${blockNumber}`,
     }),
     getTxs: builder.query<
       {
-        id: number;
-        jsonrpc: string;
-        result: string;
+        id: number
+        jsonrpc: string
+        result: string
       },
       string
     >({
-      query: (tx: string) => `/api/lookup?tx=${tx}`,
+      query: (tx: string) => `api/trace?tx=${tx}`,
     }),
     getAddress: builder.query<
       {
-        id: number;
-        jsonrpc: string;
-        result: string;
+        id: number
+        jsonrpc: string
+        result: string
       },
       string
     >({
-      query: (address: string) => `/api/lookup?tx=${address}`,
+      query: (address: string) => `api/trace?tx=${address}`,
     }),
   }),
-});
-export const {
-  useGetTxsQuery,
-  useGetAddressQuery,
-  useGetLatestBlockNumberQuery,
-} = blockApi;
+})
+export const { useGetTxsQuery, useGetAddressQuery, useGetLatestBlockNumberQuery } = blockApi
