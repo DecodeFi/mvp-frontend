@@ -27,12 +27,23 @@ function App() {
   const [searchInput, setSearchInput] = useState("")
   const [searchValue, setSearchValue] = useState("22261635")
   const searchType = detectSearchType(searchValue)
-
+  console.log(fromFilter, "fromFilter")
   const {
     data: blockData,
     isLoading: isLoadingBLockData,
     error,
   } = useGetLatestBlockNumberQuery(searchType === "block" ? searchValue : skipToken)
+  const uniqueBlockData = useMemo(() => {
+    const seen = new Set()
+    return (Array.isArray(blockData) ? blockData : []).filter((item) => {
+      const key = `${item.from_addr}-${item.to_addr}-${item.storage_addr}-${item.action}`
+
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+  }, [blockData])
+  console.log(blockData, uniqueBlockData, "uniqueBlockData")
   const { data: txDataRaw, isLoading: isLoadingTxDataRaw } = useGetTxsQuery(
     searchType === "tx" ? searchValue : skipToken
   )
@@ -58,7 +69,7 @@ function App() {
   }, [addressDataRaw])
   const rawData =
     searchType === "block"
-      ? blockData
+      ? uniqueBlockData
       : searchType === "tx"
         ? parsedTxData
         : searchType === "address"
@@ -71,7 +82,7 @@ function App() {
       (!actionFilter || tx.action === actionFilter)
     )
   })
-
+  console.log(filteredData, "filteredData")
   const { nodes, edges } = useMemo(() => buildGraphFromData(filteredData), [filteredData])
 
   useEffect(() => {
@@ -80,7 +91,7 @@ function App() {
   }, [blockData, fromFilter, toFilter, actionFilter])
   const [nodes_, setNodes] = useState(nodes)
   const [edges_, setEdges] = useState(edges)
-
+  console.log(nodes, nodes_, filteredData, "nodesfilteredData")
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
     [blockData]

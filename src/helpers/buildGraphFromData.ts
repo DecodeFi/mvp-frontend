@@ -47,37 +47,36 @@ export function buildGraphFromData(data) {
       yOffsetTo += 1
     }
 
-    // Assign storage node if needed
-    if (action === "delegate_call" && !nodesMap.has(storage)) {
-      const yStorage = (yOffsetTo + 1) * yStep
-      positionsMap.set(storage, { x: 250, y: yStorage })
-      nodesMap.set(storage, {
-        id: storage,
-        type: "nodeHeaderNode",
-        data: { label: storage },
-        dragHandle: ".drag-handle",
-        position: positionsMap.get(storage),
+    // // Assign storage node if needed
+    // if (action === "delegate_call" && !nodesMap.has(storage)) {
+    //   const yStorage = (yOffsetTo + 1) * yStep
+    //   positionsMap.set(storage, { x: 250, y: yStorage })
+    //   nodesMap.set(storage, {
+    //     id: storage,
+    //     type: "nodeHeaderNode",
+    //     data: { label: storage },
+    //     dragHandle: ".drag-handle",
+    //     position: positionsMap.get(storage),
+    //   })
+    //   yOffsetTo += 1
+    // }
+    if (action === "delegate_call") {
+      edges.push({
+        id: `${from}-${storage}-${to}-${action}`,
+        source: storage,
+        target: to,
+        label: `delegate_ref (${hash?.slice(0, 8)}…)`,
       })
-      yOffsetTo += 1
     }
-
     // Edge: from -> to
     edges.push({
-      id: `${from}-${to}-${hash}`,
+      id: `${from}-${to}-${action}`,
       source: from,
       target: to,
       label: `${action} (${hash?.slice(0, 8)}…)`,
     })
 
     // Edge: storage -> to if delegate_call
-    if (action === "delegate_call") {
-      edges.push({
-        id: `${storage}-${to}-${hash}`,
-        source: storage,
-        target: to,
-        label: `delegate_ref (${hash?.slice(0, 8)}…)`,
-      })
-    }
   }
 
   return {
