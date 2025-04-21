@@ -1,3 +1,5 @@
+import { truncateAddress } from "@/helpers/truncateAddress"
+
 export function buildGraphFromData(data) {
   if (!data) return { nodes: [], edges: [] }
 
@@ -65,7 +67,7 @@ export function buildGraphFromData(data) {
         id: `${from}-${storage}-${to}-${action}`,
         source: storage,
         target: to,
-        label: `delegate_ref (${hash?.slice(0, 8)}…)`,
+        label: `delegate_call (${truncateAddress(hash, 5)})`,
       })
     }
     // Edge: from -> to
@@ -73,11 +75,15 @@ export function buildGraphFromData(data) {
       id: `${from}-${to}-${action}`,
       source: from,
       animated: true,
+      markerEnd: {
+        type: "arrowclosed",
+        color: "#FF0071",
+      },
       style: {
         stroke: "#FF0071",
       },
       target: to,
-      label: `${action} (${hash?.slice(0, 8)}…)`,
+      label: `${action} (${truncateAddress(hash, 5)})`,
     })
 
     // Edge: storage -> to if delegate_call
