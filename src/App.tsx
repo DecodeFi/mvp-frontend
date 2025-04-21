@@ -13,7 +13,7 @@ import {
 import { skipToken } from "@reduxjs/toolkit/query"
 import { detectSearchType } from "@/helpers/detectSearchType"
 import { buildGraphFromData } from "@/helpers/buildGraphFromData"
-import { SelectScrollable } from "@/components/graph-filters/AddressFilter"
+import { SelectAddress } from "@/components/graph-filters/SelectAddress"
 import { IBlockData } from "@/types/IBlockData"
 
 const nodeTypes = {
@@ -82,7 +82,7 @@ function App() {
       (!actionFilter || tx.action === actionFilter)
     )
   })
-  console.log(filteredData, "filteredData")
+
   const { nodes, edges } = useMemo(() => buildGraphFromData(filteredData), [filteredData])
 
   useEffect(() => {
@@ -94,11 +94,11 @@ function App() {
   console.log(nodes, nodes_, filteredData, "nodesfilteredData")
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    [blockData]
+    [blockData, filteredData]
   )
   const onEdgesChange = useCallback(
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    [blockData]
+    [blockData, filteredData]
   )
   return (
     <div className={css.container}>
@@ -117,12 +117,12 @@ function App() {
       <div
         style={{ marginBottom: "1rem", display: "flex", gap: "1rem", alignItems: "center" }}
       >
-        <SelectScrollable
+        <SelectAddress
           addresses={rawData?.map(({ from_addr }) => from_addr)}
           onSelect={setFromFilter}
           type="from"
         />
-        <SelectScrollable
+        <SelectAddress
           addresses={rawData?.map(({ to_addr }) => to_addr)}
           onSelect={setToFilter}
           type="to"
@@ -138,7 +138,7 @@ function App() {
           nodes={nodes_}
           edges={edges_}
           nodeTypes={nodeTypes}
-          fitView
+          onInit={(instance) => instance.setViewport({ x: 300, y: 0, zoom: 0.5 })}
         >
           <Background />
         </ReactFlow>

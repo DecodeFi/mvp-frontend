@@ -21,7 +21,7 @@ import { truncateAddress } from "@/helpers/truncateAddress"
 const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
   return (
     <BaseNode selected={selected} className="px-3 py-2">
-      <Handle type="target" position={Position.Top} />
+      <Handle type="target" position={Position.Left} />
       <NodeHeader style={{ cursor: "grab" }} className="drag-handle -mx-3 -mt-2 border-b">
         <NodeHeaderIcon>
           <Rocket />
@@ -34,7 +34,7 @@ const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
         <div>{truncateAddress(data.label as string, 6)}</div>
         <CopyButton text={data.label as string} />
       </div>
-      <Handle type="source" position={Position.Bottom} />
+      <Handle type="source" position={Position.Right} />
     </BaseNode>
   )
 })

@@ -22,7 +22,7 @@ export function buildGraphFromData(data) {
     // Assign from node
     if (!nodesMap.has(from)) {
       const yFrom = yOffsetFrom * yStep
-      positionsMap.set(from, { x: 30, y: yFrom })
+      positionsMap.set(from, { x: -400, y: yFrom + 300 })
       nodesMap.set(from, {
         id: from,
         type: "nodeHeaderNode",
@@ -36,7 +36,7 @@ export function buildGraphFromData(data) {
     // Assign to node
     if (!nodesMap.has(to)) {
       const yTo = yOffsetTo * yStep
-      positionsMap.set(to, { x: 400, y: yTo })
+      positionsMap.set(to, { x: 500, y: yTo })
       nodesMap.set(to, {
         id: to,
         type: "nodeHeaderNode",
@@ -72,6 +72,10 @@ export function buildGraphFromData(data) {
     edges.push({
       id: `${from}-${to}-${action}`,
       source: from,
+      animated: true,
+      style: {
+        stroke: "#FF0071",
+      },
       target: to,
       label: `${action} (${hash?.slice(0, 8)}…)`,
     })
