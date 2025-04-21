@@ -57,6 +57,7 @@ export function SelectAddress({ addresses, onSelect, type }: SelectScrollablePro
             onClick={() => {
               setSelected([])
               setSearchTerm("")
+              onSelect([])
             }}
             style={{ backgroundColor: "transparent" }}
           >
