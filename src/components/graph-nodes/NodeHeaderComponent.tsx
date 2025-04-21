@@ -9,6 +9,7 @@ import { Rocket } from "lucide-react"
 import {
   NodeHeader,
   NodeHeaderActions,
+  NodeHeaderAddAction,
   NodeHeaderDeleteAction,
   NodeHeaderIcon,
   NodeHeaderMenuAction,
@@ -29,6 +30,7 @@ const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
         <NodeHeaderTitle>{truncateAddress(data.label as string, 6)}</NodeHeaderTitle>
 
         <NodeHeaderDeleteAction />
+        <NodeHeaderAddAction />
       </NodeHeader>
       <div className={"flex mt-2 justify-start gap-3 items-center "}>
         <div>{truncateAddress(data.label as string, 6)}</div>

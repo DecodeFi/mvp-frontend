@@ -78,6 +78,8 @@ export function buildGraphFromData(data) {
       markerEnd: {
         type: "arrowclosed",
         color: "#FF0071",
+        width: 20,
+        height: 20,
       },
       style: {
         stroke: "#FF0071",
