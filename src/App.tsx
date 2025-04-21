@@ -25,7 +25,7 @@ function App() {
   const [toFilter, setToFilter] = useState<string[]>([])
   const [actionFilter, setActionFilter] = useState("")
   const [searchInput, setSearchInput] = useState("")
-  const [searchValue, setSearchValue] = useState("22261635")
+  const [searchValue, setSearchValue] = useState("")
   const searchType = detectSearchType(searchValue)
   console.log(fromFilter, "fromFilter")
   const {
@@ -43,13 +43,14 @@ function App() {
       return true
     })
   }, [blockData])
-  console.log(blockData, uniqueBlockData, "uniqueBlockData")
+
   const { data: txDataRaw, isLoading: isLoadingTxDataRaw } = useGetTxsQuery(
     searchType === "tx" ? searchValue : skipToken
   )
   const { data: addressDataRaw, isLoading: isLoadingAddressDataRaw } = useGetAddressQuery(
     searchType === "address" ? searchValue : skipToken
   )
+
   const parsedTxData = useMemo(() => {
     try {
       if (txDataRaw?.result) return JSON.parse(txDataRaw.result)
@@ -59,22 +60,15 @@ function App() {
     return []
   }, [txDataRaw])
 
-  const parsedAddressData = useMemo(() => {
-    try {
-      if (addressDataRaw?.result) return JSON.parse(addressDataRaw.result)
-    } catch (e) {
-      console.error("Failed to parse addressDataRaw", e)
-    }
-    return []
-  }, [addressDataRaw])
   const rawData =
     searchType === "block"
-      ? uniqueBlockData
+      ? uniqueBlockData || addressDataRaw
       : searchType === "tx"
         ? parsedTxData
         : searchType === "address"
-          ? parsedAddressData
+          ? addressDataRaw
           : []
+
   const filteredData: IBlockData[] = rawData?.filter((tx) => {
     return (
       (!fromFilter.length || fromFilter.includes(tx.from_addr)) &&
@@ -86,19 +80,19 @@ function App() {
   const { nodes, edges } = useMemo(() => buildGraphFromData(filteredData), [filteredData])
 
   useEffect(() => {
-    if (blockData) setNodes(nodes)
+    if (blockData || addressDataRaw) setNodes(nodes)
     setEdges(edges)
-  }, [blockData, fromFilter, toFilter, actionFilter])
+  }, [blockData, txDataRaw, addressDataRaw, fromFilter, toFilter, actionFilter])
   const [nodes_, setNodes] = useState(nodes)
   const [edges_, setEdges] = useState(edges)
-  console.log(nodes, nodes_, filteredData, "nodesfilteredData")
+
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    [blockData, filteredData]
+    [blockData, txDataRaw, filteredData, addressDataRaw]
   )
   const onEdgesChange = useCallback(
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    [blockData, filteredData]
+    [blockData, txDataRaw, filteredData, addressDataRaw]
   )
   return (
     <div className={css.container}>

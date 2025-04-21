@@ -36,7 +36,7 @@ export const blockApi = createApi({
       },
       string
     >({
-      query: (address: string) => `api/trace?tx=${address}`,
+      query: (address: string) => `api/trace?address=${address}`,
     }),
   }),
 })
