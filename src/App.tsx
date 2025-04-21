@@ -27,7 +27,6 @@ function App() {
   const [searchInput, setSearchInput] = useState("")
   const [searchValue, setSearchValue] = useState("")
   const searchType = detectSearchType(searchValue)
-  console.log(fromFilter, "fromFilter")
   const {
     data: blockData,
     isLoading: isLoadingBLockData,
