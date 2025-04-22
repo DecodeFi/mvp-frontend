@@ -13,7 +13,7 @@ import {
 import { skipToken } from "@reduxjs/toolkit/query"
 import { detectSearchType } from "@/helpers/detectSearchType"
 import { buildGraphFromData } from "@/helpers/buildGraphFromData"
-import { SelectAddress } from "@/components/graph-filters/SelectAddress"
+import { FilterAddress } from "@/components/graph-filters/FilterAddress"
 import { IBlockData } from "@/types/IBlockData"
 
 const nodeTypes = {
@@ -110,12 +110,12 @@ function App() {
       <div
         style={{ marginBottom: "1rem", display: "flex", gap: "1rem", alignItems: "center" }}
       >
-        <SelectAddress
+        <FilterAddress
           addresses={rawData?.map(({ from_addr }) => from_addr)}
           onSelect={setFromFilter}
           type="from"
         />
-        <SelectAddress
+        <FilterAddress
           addresses={rawData?.map(({ to_addr }) => to_addr)}
           onSelect={setToFilter}
           type="to"

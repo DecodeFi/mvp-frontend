@@ -24,7 +24,7 @@ export function buildGraphFromData(data) {
     // Assign from node
     if (!nodesMap.has(from)) {
       const yFrom = yOffsetFrom * yStep
-      positionsMap.set(from, { x: -400, y: yFrom + 300 })
+      positionsMap.set(from, { x: 0, y: yFrom + 300 })
       nodesMap.set(from, {
         id: from,
         type: "nodeHeaderNode",

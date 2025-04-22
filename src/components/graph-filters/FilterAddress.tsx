@@ -16,7 +16,7 @@ interface SelectScrollableProps {
   type: "to" | "from"
 }
 
-export function SelectAddress({ addresses, onSelect, type }: SelectScrollableProps) {
+export function FilterAddress({ addresses, onSelect, type }: SelectScrollableProps) {
   const [searchTerm, setSearchTerm] = React.useState("")
   const [selected, setSelected] = React.useState<string[]>([])
 
@@ -36,7 +36,7 @@ export function SelectAddress({ addresses, onSelect, type }: SelectScrollablePro
     })
     setSearchTerm("")
   }
-  const placeHolder = type === "to" ? "Select target addresses" : "Select source addresses"
+  const placeHolder = type === "to" ? "Filter target addresses" : "Filter source addresses"
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
