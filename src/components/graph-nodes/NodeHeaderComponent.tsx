@@ -1,4 +1,4 @@
-import React, { memo } from "react"
+import React, { memo, useState } from "react"
 import { Handle, NodeProps, Position } from "@xyflow/react"
 import {
   DropdownMenuItem,
@@ -9,7 +9,8 @@ import { Rocket } from "lucide-react"
 import {
   NodeHeader,
   NodeHeaderActions,
-  NodeHeaderAddAction,
+  NodeHeaderAddNodeIn,
+  NodeHeaderAddNodeOut,
   NodeHeaderDeleteAction,
   NodeHeaderIcon,
   NodeHeaderMenuAction,
@@ -20,8 +21,24 @@ import { CopyButton } from "@/components/ui/CopyButton"
 import { truncateAddress } from "@/helpers/truncateAddress"
 
 const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
+  const [hovered, setHovered] = useState(false)
   return (
-    <BaseNode selected={selected} className="px-3 py-2">
+    <BaseNode
+      selected={selected}
+      className="px-3 py-2"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {hovered && (
+        <>
+          <div className="absolute z-10 left-[-24px] top-1/2 -translate-y-1/2">
+            <NodeHeaderAddNodeIn />
+          </div>
+          <div className="absolute z-10 right-[-24px] top-1/2 -translate-y-1/2">
+            <NodeHeaderAddNodeOut />
+          </div>
+        </>
+      )}
       <Handle type="target" position={Position.Left} />
       <NodeHeader style={{ cursor: "grab" }} className="drag-handle -mx-3 -mt-2 border-b">
         <NodeHeaderIcon>
@@ -30,7 +47,6 @@ const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
         <NodeHeaderTitle>{truncateAddress(data.label as string, 6)}</NodeHeaderTitle>
 
         <NodeHeaderDeleteAction />
-        <NodeHeaderAddAction />
       </NodeHeader>
       <div className={"flex mt-2 justify-start gap-3 items-center "}>
         <div>{truncateAddress(data.label as string, 6)}</div>

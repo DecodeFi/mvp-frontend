@@ -175,7 +175,6 @@ export const NodeHeaderDeleteAction = () => {
   }, [id, setNodes])
 
   return (
-    //@ts-ignore
     <NodeHeaderAction
       style={{ backgroundColor: "white" }}
       onClick={handleClick}
@@ -187,30 +186,60 @@ export const NodeHeaderDeleteAction = () => {
 }
 
 NodeHeaderDeleteAction.displayName = "NodeHeaderDeleteAction"
-export const NodeHeaderAddAction = () => {
-  const id = useNodeId()
 
-  const { setNodes, setEdges, getNodes, getEdges, getNode, getEdge } = useReactFlow()
+export const NodeHeaderAddNodeOut = () => {
+  const id = useNodeId()
+  const { setNodes, setEdges, getNodes, getEdges, getNode } = useReactFlow()
   const node = getNode(id)
-  const { data: addressDataRaw, isLoading: isLoadingAddressDataRaw } = useGetAddressQuery(
-    node?.data?.label
-  )
+
+  const { data: addressDataRaw } = useGetAddressQuery(node?.data?.label as string)
+
   const { nodes, edges } = useMemo(() => buildGraphFromData(addressDataRaw), [addressDataRaw])
 
-  const outgoingEdges = edges.filter((item) => item?.source !== node?.data?.label)
-  const filteredNodes = nodes.filter((item) => item?.data?.label !== outgoingEdges[0]?.source)
+  const outgoingEdges = edges.filter((edge) => edge.source === node?.data?.label)
+  const targets = outgoingEdges.map((edge) => edge.target)
+
+  const filteredNodes = nodes.filter((n) => targets.includes(n.id))
 
   const handleClick = useCallback(() => {
     setNodes((oldNodes) => [...oldNodes, ...filteredNodes])
     setEdges((oldEdges) => [...oldEdges, ...outgoingEdges])
-  }, [id, setNodes, setEdges, getNodes, getEdges])
+  }, [filteredNodes, outgoingEdges, setNodes, setEdges])
 
   return (
-    //@ts-ignore
     <NodeHeaderAction
       onClick={handleClick}
       label="Add linked nodes"
       style={{ backgroundColor: "white" }}
+    >
+      +
+    </NodeHeaderAction>
+  )
+}
+export const NodeHeaderAddNodeIn = () => {
+  const id = useNodeId()
+  const { setNodes, setEdges, getNodes, getEdges, getNode } = useReactFlow()
+  const node = getNode(id)
+
+  const { data: addressDataRaw } = useGetAddressQuery(node?.data?.label as string)
+
+  const { nodes, edges } = useMemo(() => buildGraphFromData(addressDataRaw), [addressDataRaw])
+
+  const incomingEdges = edges.filter((edge) => edge.target === node?.data?.label)
+
+  const sources = incomingEdges.map((edge) => edge.source)
+  const filteredNodes = nodes.filter((node) => sources.includes(node.id))
+
+  const handleClick = useCallback(() => {
+    setNodes((oldNodes) => [...oldNodes, ...filteredNodes])
+    setEdges((oldEdges) => [...oldEdges, ...incomingEdges])
+  }, [filteredNodes, incomingEdges, setNodes, setEdges])
+
+  return (
+    <NodeHeaderAction
+      onClick={handleClick}
+      label="Add incoming nodes"
+      style={{ backgroundColor: "white", borderRadius: "150px" }}
     >
       +
     </NodeHeaderAction>
