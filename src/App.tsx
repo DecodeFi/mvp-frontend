@@ -25,7 +25,7 @@ function App() {
   const [toFilter, setToFilter] = useState<string[]>([])
   const [actionFilter, setActionFilter] = useState("")
   const [searchInput, setSearchInput] = useState("")
-  const [searchValue, setSearchValue] = useState("")
+  const [searchValue, setSearchValue] = useState("0xa69babef1ca67a37ffaf7a485dfff3382056e78c")
   const searchType = detectSearchType(searchValue)
   const {
     data: blockData,

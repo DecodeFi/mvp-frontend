@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, HTMLAttributes, ReactNode } from "react"
+import { forwardRef, useCallback, HTMLAttributes, ReactNode, useMemo } from "react"
 import { useNodeId, useReactFlow } from "@xyflow/react"
 import { EllipsisVertical, Trash } from "lucide-react"
 
@@ -11,7 +11,8 @@ import {
   DropdownMenuContent,
 } from "@/components/ui/dropdown-menu"
 import * as React from "react"
-import { IBlockData } from "@/types/IBlockData"
+import { useGetAddressQuery } from "../../../backend/apiSlice"
+import { buildGraphFromData } from "@/helpers/buildGraphFromData"
 
 /* NODE HEADER -------------------------------------------------------------- */
 
@@ -188,52 +189,20 @@ export const NodeHeaderDeleteAction = () => {
 NodeHeaderDeleteAction.displayName = "NodeHeaderDeleteAction"
 export const NodeHeaderAddAction = () => {
   const id = useNodeId()
-  const { setNodes, setEdges, getNodes, getEdges } = useReactFlow()
+
+  const { setNodes, setEdges, getNodes, getEdges, getNode, getEdge } = useReactFlow()
+  const node = getNode(id)
+  const { data: addressDataRaw, isLoading: isLoadingAddressDataRaw } = useGetAddressQuery(
+    node?.data?.label
+  )
+  const { nodes, edges } = useMemo(() => buildGraphFromData(addressDataRaw), [addressDataRaw])
+
+  const outgoingEdges = edges.filter((item) => item?.source !== node?.data?.label)
+  const filteredNodes = nodes.filter((item) => item?.data?.label !== outgoingEdges[0]?.source)
 
   const handleClick = useCallback(() => {
-    // 👇 допустим rawData передан через window или контекст
-    const fullGraph = (window as any).graphData as IBlockData[]
-
-    const outgoing = fullGraph?.filter((tx) => tx.from_addr === id)
-    const existingNodes = new Set(getNodes().map((n) => n.id))
-    const existingEdges = new Set(getEdges().map((e) => e.id))
-
-    const newNodes = []
-    const newEdges = []
-
-    for (const tx of outgoing) {
-      if (!existingNodes.has(tx.to_addr)) {
-        newNodes.push({
-          id: tx.to_addr,
-          type: "nodeHeaderNode",
-          data: { label: tx.to_addr },
-          position: {
-            x: Math.random() * 400,
-            y: Math.random() * 400,
-          },
-        })
-      }
-
-      const edgeId = `${tx.from_addr}-${tx.to_addr}-${tx.action}`
-      if (!existingEdges.has(edgeId)) {
-        newEdges.push({
-          id: edgeId,
-          source: tx.from_addr,
-          target: tx.to_addr,
-          animated: true,
-          markerEnd: {
-            type: "arrowclosed",
-            color: "#6366f1",
-            width: 20,
-            height: 20,
-          },
-          style: { stroke: "#6366f1" },
-        })
-      }
-    }
-
-    setNodes((nodes) => [...nodes, ...newNodes])
-    setEdges((edges) => [...edges, ...newEdges])
+    setNodes((oldNodes) => [...oldNodes, ...filteredNodes])
+    setEdges((oldEdges) => [...oldEdges, ...outgoingEdges])
   }, [id, setNodes, setEdges, getNodes, getEdges])
 
   return (
