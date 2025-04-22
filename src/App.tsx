@@ -76,7 +76,10 @@ function App() {
     )
   })
 
-  const { nodes, edges } = useMemo(() => buildGraphFromData(filteredData), [filteredData])
+  const { nodes, edges } = useMemo(
+    () => buildGraphFromData(filteredData, searchValue),
+    [filteredData]
+  )
 
   useEffect(() => {
     if (blockData || addressDataRaw) setNodes(nodes)

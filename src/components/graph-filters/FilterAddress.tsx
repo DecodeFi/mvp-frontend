@@ -59,7 +59,9 @@ export function FilterAddress({ addresses, onSelect, type }: SelectScrollablePro
               setSearchTerm("")
               onSelect([])
             }}
-            style={{ backgroundColor: "transparent" }}
+            style={{
+              backgroundColor: "transparent",
+            }}
           >
             <Trash color={"black"} width={20} height={20} />
           </Button>
