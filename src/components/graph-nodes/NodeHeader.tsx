@@ -194,7 +194,10 @@ export const NodeHeaderAddNodeOut = () => {
 
   const { data: addressDataRaw } = useGetAddressQuery(node?.data?.label as string)
 
-  const { nodes, edges } = useMemo(() => buildGraphFromData(addressDataRaw), [addressDataRaw])
+  const { nodes, edges } = useMemo(
+    () => buildGraphFromData(addressDataRaw?.traces),
+    [addressDataRaw]
+  )
 
   const outgoingEdges = edges.filter((edge) => edge.source === node?.data?.label)
   const targets = outgoingEdges.map((edge) => edge.target)
@@ -223,7 +226,10 @@ export const NodeHeaderAddNodeIn = () => {
 
   const { data: addressDataRaw } = useGetAddressQuery(node?.data?.label as string)
 
-  const { nodes, edges } = useMemo(() => buildGraphFromData(addressDataRaw), [addressDataRaw])
+  const { nodes, edges } = useMemo(
+    () => buildGraphFromData(addressDataRaw?.traces),
+    [addressDataRaw]
+  )
 
   const incomingEdges = edges.filter((edge) => edge.target === node?.data?.label)
 

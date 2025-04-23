@@ -6,6 +6,7 @@ import { applyEdgeChanges, applyNodeChanges, Background, ReactFlow } from "@xyfl
 import NodeHeaderComponent from "@/components/graph-nodes/NodeHeaderComponent"
 import { SearchBar } from "@/components/SearchBar"
 import {
+  useGetAddressInfoQuery,
   useGetAddressQuery,
   useGetLatestBlockNumberQuery,
   useGetTxsQuery,
@@ -15,6 +16,7 @@ import { detectSearchType } from "@/helpers/detectSearchType"
 import { buildGraphFromData } from "@/helpers/buildGraphFromData"
 import { FilterAddress } from "@/components/graph-filters/FilterAddress"
 import { IBlockData } from "@/types/IBlockData"
+import { truncateAddress } from "@/helpers/truncateAddress"
 
 const nodeTypes = {
   nodeHeaderNode: NodeHeaderComponent,
@@ -87,7 +89,7 @@ function App() {
   }, [blockData, txDataRaw, addressDataRaw, fromFilter, toFilter, actionFilter])
   const [nodes_, setNodes] = useState(nodes)
   const [edges_, setEdges] = useState(edges)
-
+  console.log(nodes_, edges_, "dsdasdsada")
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
     [blockData, txDataRaw, filteredData, addressDataRaw]
@@ -95,6 +97,9 @@ function App() {
   const onEdgesChange = useCallback(
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     [blockData, txDataRaw, filteredData, addressDataRaw]
+  )
+  const { data: addressData } = useGetAddressInfoQuery(
+    "0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b"
   )
   return (
     <div className={css.container}>
@@ -138,6 +143,29 @@ function App() {
         >
           <Background />
         </ReactFlow>
+        <div
+          style={{
+            marginTop: "1rem",
+            width: "70vw",
+            maxHeight: "30vh",
+            backgroundColor: "#f5f5f5",
+            borderRadius: "12px",
+          }}
+        >
+          {addressData && (
+            <div>
+              <div className={"flex gap-3"}>
+                <div>{truncateAddress(addressData.address, 6)}</div>
+                <div>{addressData.is_contract ? "contract" : "user"}</div>
+                <div>
+                  {addressData.is_contract && addressData.is_proxy
+                    ? "proxy"
+                    : "implementation contract"}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

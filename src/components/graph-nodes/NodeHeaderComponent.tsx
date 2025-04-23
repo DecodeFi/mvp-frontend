@@ -20,6 +20,7 @@ import daiIcon from "@/assets/daiIcon.svg"
 
 const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
   const id = useNodeId()
+  //0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b
   const { data: addressData } = useGetAddressInfoQuery(id)
   console.log(addressData, "woooow")
   let icon = ""
