@@ -49,7 +49,7 @@ function App() {
   const { data: addressDataRaw, isLoading: isLoadingAddressDataRaw } = useGetAddressQuery(
     searchType === "address" ? searchValue : skipToken
   )
-
+  console.log(blockData, txDataRaw, addressDataRaw, "beeeb")
   const parsedTxData = useMemo(() => {
     try {
       if (txDataRaw?.result) return JSON.parse(txDataRaw.result)
@@ -65,7 +65,7 @@ function App() {
       : searchType === "tx"
         ? parsedTxData
         : searchType === "address"
-          ? addressDataRaw
+          ? addressDataRaw?.traces
           : []
 
   const filteredData: IBlockData[] = rawData?.filter((tx) => {

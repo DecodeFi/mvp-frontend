@@ -1,26 +1,43 @@
-import React, { memo, useState } from "react"
-import { Handle, NodeProps, Position } from "@xyflow/react"
-import {
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
+import React, { memo, useEffect, useState } from "react"
+import { Handle, NodeProps, Position, useNodeId } from "@xyflow/react"
 import { Rocket } from "lucide-react"
 import {
   NodeHeader,
-  NodeHeaderActions,
   NodeHeaderAddNodeIn,
   NodeHeaderAddNodeOut,
   NodeHeaderDeleteAction,
   NodeHeaderIcon,
-  NodeHeaderMenuAction,
   NodeHeaderTitle,
 } from "@/components/graph-nodes/NodeHeader"
 import { BaseNode } from "@/components/graph-nodes/BaseNode"
 import { CopyButton } from "@/components/ui/CopyButton"
 import { truncateAddress } from "@/helpers/truncateAddress"
+import { useGetAddressInfoQuery } from "../../../backend/apiSlice"
+import tetherIcon from "@/assets/tetherIcon.svg"
+import uniswapIcon from "@/assets/uniswapIcon.svg"
+import wethIcon from "@/assets/wethIcon.svg"
+import daiIcon from "@/assets/daiIcon.svg"
 
 const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
+  const id = useNodeId()
+  const { data: addressData } = useGetAddressInfoQuery(id)
+  console.log(addressData, "woooow")
+  let icon = ""
+  switch (true) {
+    case addressData?.contract_name?.toLowerCase()?.includes("uniswap"):
+      icon = uniswapIcon
+      break
+    case addressData?.contract_name?.toLowerCase()?.includes("tether"):
+      icon = tetherIcon
+      break
+    case addressData?.contract_name?.toLowerCase()?.includes("weth"):
+      icon = wethIcon
+      break
+    case addressData?.contract_name?.toLowerCase()?.includes("dai"):
+      icon = daiIcon
+      break
+  }
+  console.log(icon, "iconnn")
   const [hovered, setHovered] = useState(false)
   return (
     <BaseNode
@@ -42,9 +59,9 @@ const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
       <Handle type="target" position={Position.Left} />
       <NodeHeader style={{ cursor: "grab" }} className="drag-handle -mx-3 -mt-2 border-b">
         <NodeHeaderIcon>
-          <Rocket />
+          {icon ? <img width={16} height={16} src={icon} /> : <Rocket />}
         </NodeHeaderIcon>
-        <NodeHeaderTitle>{truncateAddress(data.label as string, 6)}</NodeHeaderTitle>
+        <NodeHeaderTitle>{addressData?.contract_name}</NodeHeaderTitle>
 
         <NodeHeaderDeleteAction />
       </NodeHeader>

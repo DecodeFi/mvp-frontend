@@ -1,7 +1,7 @@
 import { truncateAddress } from "@/helpers/truncateAddress"
 
 export function buildGraphFromData(data, id?) {
-  if (!data) return { nodes: [], edges: [] }
+  if (!data?.length) return { nodes: [], edges: [] }
 
   const nodesMap = new Map()
   const positionsMap = new Map()

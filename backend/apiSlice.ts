@@ -1,4 +1,39 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
+import { Address } from "viem"
+
+export interface Trace {
+  block_number: number
+  tx_hash: string
+  from_addr: string
+  to_addr: string
+  storage_addr: string
+  value: string
+  calldata: ""
+  action: string
+}
+
+export interface MetadataItem {
+  contract_name: string | null
+}
+
+export interface AddressData {
+  metadata: Record<string, MetadataItem>
+  traces: Trace[]
+}
+
+export interface AddressInfo {
+  address: Address
+  compiler_version: string
+  constructor_arguments: string
+  contract_abi: string
+  contract_bytecode: string
+  contract_name: string
+  contract_source_code: string
+  is_contract: boolean
+  is_proxy: boolean
+  is_verified: boolean
+  license_type: string
+}
 
 export const blockApi = createApi({
   reducerPath: "blockApi",
@@ -28,16 +63,17 @@ export const blockApi = createApi({
     >({
       query: (tx: string) => `api/trace?tx=${tx}`,
     }),
-    getAddress: builder.query<
-      {
-        id: number
-        jsonrpc: string
-        result: string
-      },
-      string
-    >({
+    getAddress: builder.query<AddressData, string>({
       query: (address: string) => `api/trace?address=${address}`,
+    }),
+    getAddressInfo: builder.query<AddressInfo, string>({
+      query: (address: string) => `api/metadata/address/${address}`,
     }),
   }),
 })
-export const { useGetTxsQuery, useGetAddressQuery, useGetLatestBlockNumberQuery } = blockApi
+export const {
+  useGetTxsQuery,
+  useGetAddressQuery,
+  useGetLatestBlockNumberQuery,
+  useGetAddressInfoQuery,
+} = blockApi
