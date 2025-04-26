@@ -1,6 +1,6 @@
 import { truncateAddress } from "@/helpers/truncateAddress"
 
-export function buildGraphFromData(data, id?) {
+export function buildGraphFromData(data, id?, setChosenAddress?) {
   if (!data?.length) return { nodes: [], edges: [] }
 
   const nodesMap = new Map()
@@ -29,7 +29,7 @@ export function buildGraphFromData(data, id?) {
       nodesMap.set(from, {
         id: from,
         type: "nodeHeaderNode",
-        data: { label: from },
+        data: { label: from, setChosenAddress: setChosenAddress },
         dragHandle: ".drag-handle",
         position: positionsMap.get(from),
       })
@@ -43,7 +43,7 @@ export function buildGraphFromData(data, id?) {
       nodesMap.set(to, {
         id: to,
         type: "nodeHeaderNode",
-        data: { label: to },
+        data: { label: to, setChosenAddress: setChosenAddress },
         dragHandle: ".drag-handle",
         position: positionsMap.get(to),
       })

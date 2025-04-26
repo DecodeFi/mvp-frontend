@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { AddressInfo } from "../../../backend/apiSlice"
+import { AddressInfo, useGetAddressInfoQuery } from "../../../backend/apiSlice"
 import { publicClient } from "@/helpers/client"
 import React, { useEffect, useState } from "react"
 import { truncateAddress } from "@/helpers/truncateAddress"
@@ -22,13 +22,14 @@ import {
 } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
 
-export function ContractTable({ data }: { data: AddressInfo }) {
+export function ContractTable({ address }: { address: string }) {
+  const { data } = useGetAddressInfoQuery(address)
   const [balance, setBalance] = useState<number>()
-  if (!data) return null
+  if (!address) return null
   useEffect(() => {
     const fetchBalance = async () => {
       const response = await fetch(
-        `https://deep-index.moralis.io/api/v2.2/wallets/0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b/tokens?chain=eth`,
+        `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens?chain=eth`,
         {
           headers: {
             "X-API-Key":
@@ -121,6 +122,7 @@ export function ContractTable({ data }: { data: AddressInfo }) {
                             color: "red",
                             borderRadius: "10px",
                             padding: "2px 4px",
+                            width: "fit-content",
                           }}
                         >
                           Source code unavailable

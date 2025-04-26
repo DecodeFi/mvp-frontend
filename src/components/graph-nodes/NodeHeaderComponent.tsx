@@ -18,10 +18,15 @@ import uniswapIcon from "@/assets/uniswapIcon.svg"
 import wethIcon from "@/assets/wethIcon.svg"
 import daiIcon from "@/assets/daiIcon.svg"
 import { motion } from "framer-motion"
+import { Button } from "@/components/ui/button"
 
 const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
   const id = useNodeId()
   const { data: addressData } = useGetAddressInfoQuery(id)
+  const { label, setChosenAddress } = data as {
+    label: string
+    setChosenAddress: (address: string) => void
+  }
 
   let icon = ""
   switch (true) {
@@ -72,8 +77,19 @@ const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
           <NodeHeaderDeleteAction />
         </NodeHeader>
         <div className={"flex mt-2 justify-start gap-3 items-center "}>
-          <div>{truncateAddress(data.label as string, 6)}</div>
-          <CopyButton text={data.label as string} />
+          <div>{truncateAddress(label as string, 6)}</div>
+          <CopyButton text={label as string} />
+          <Button
+            onClick={() => setChosenAddress(label)}
+            style={{
+              borderRadius: "10px",
+              padding: "2px 4px",
+              color: "black",
+              height: "fit-content",
+            }}
+          >
+            View
+          </Button>
         </div>
         <Handle type="source" id="source" position={Position.Right} />
       </BaseNode>

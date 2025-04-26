@@ -30,6 +30,8 @@ function App() {
   const [actionFilter, setActionFilter] = useState("")
   const [searchInput, setSearchInput] = useState("")
   const [searchValue, setSearchValue] = useState("0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b")
+  const [viewAddress, setViewAddress] = useState<string>("")
+  console.log(viewAddress, "viewAddress")
   const searchType = detectSearchType(searchValue)
   const {
     data: blockData,
@@ -81,7 +83,7 @@ function App() {
   })
 
   const { nodes, edges } = useMemo(
-    () => buildGraphFromData(filteredData, searchValue),
+    () => buildGraphFromData(filteredData, searchValue, setViewAddress),
     [filteredData]
   )
 
@@ -100,12 +102,7 @@ function App() {
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     [blockData, txDataRaw, filteredData, addressDataRaw]
   )
-  const { data: addressData } = useGetAddressInfoQuery(
-    "0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b"
-  )
-  const sources = addressData?.contractSourceCode?.sources
-  const firstSourceKey = sources ? Object.keys(sources)[0] : null
-  const contractCode = firstSourceKey ? sources[firstSourceKey].content : ""
+
   return (
     <div className={css.container}>
       <Header />
@@ -113,7 +110,10 @@ function App() {
         <SearchBar
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          onSubmit={() => setSearchValue(searchInput)}
+          onSubmit={() => {
+            setSearchValue(searchInput)
+            setViewAddress(searchInput)
+          }}
         />
       </div>
       {(isLoadingBLockData || isLoadingAddressDataRaw || isLoadingTxDataRaw) && (
@@ -158,13 +158,13 @@ function App() {
             border: "1px solid #FF0071",
           }}
         >
-          {addressData && (
+          {viewAddress && (
             <div>
-              <ContractTable data={addressData} />
+              <ContractTable address={viewAddress} />
             </div>
           )}
         </div>
-        <ContractCodeViewer code={contractCode} />
+        {/*<ContractCodeViewer code={contractCode} />*/}
       </div>
     </div>
   )
