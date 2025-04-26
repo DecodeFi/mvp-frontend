@@ -18,6 +18,7 @@ import { FilterAddress } from "@/components/graph-filters/FilterAddress"
 import { IBlockData } from "@/types/IBlockData"
 import { truncateAddress } from "@/helpers/truncateAddress"
 import { ContractTable } from "@/components/ContractTable/ContractTable"
+import { ContractCodeViewer } from "@/components/CodeViewer/CodeViewer"
 
 const nodeTypes = {
   nodeHeaderNode: NodeHeaderComponent,
@@ -102,6 +103,9 @@ function App() {
   const { data: addressData } = useGetAddressInfoQuery(
     "0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b"
   )
+  const sources = addressData?.contractSourceCode?.sources
+  const firstSourceKey = sources ? Object.keys(sources)[0] : null
+  const contractCode = firstSourceKey ? sources[firstSourceKey].content : ""
   return (
     <div className={css.container}>
       <Header />
@@ -116,9 +120,7 @@ function App() {
         <div>loading...</div>
       )}
 
-      <div
-        style={{ marginBottom: "1rem", display: "flex", gap: "1rem", alignItems: "center" }}
-      >
+      <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
         <FilterAddress
           addresses={rawData?.map(({ from_addr }) => from_addr)}
           onSelect={setFromFilter}
@@ -147,10 +149,13 @@ function App() {
         <div
           style={{
             marginTop: "1rem",
-            width: "70vw",
+            width: "60vw",
+            margin: "24px auto",
+
             maxHeight: "30vh",
-            backgroundColor: "#f5f5f5",
+            backgroundColor: "",
             borderRadius: "12px",
+            border: "1px solid #FF0071",
           }}
         >
           {addressData && (
@@ -159,6 +164,7 @@ function App() {
             </div>
           )}
         </div>
+        <ContractCodeViewer code={contractCode} />
       </div>
     </div>
   )

@@ -28,7 +28,7 @@ export interface AddressInfo {
   contractAbi: string
   contractBytecode: string
   contractName: string
-  contractSourceCode: string
+  contractSourceCode: any
   isContract: boolean
   isProxy: boolean
   isVerified: boolean

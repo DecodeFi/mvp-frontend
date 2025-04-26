@@ -10,9 +10,10 @@
     justify-content: center;
     flex-direction: column;
     width: 100%;
-    gap: 4rem;
+    gap: 2rem;
     max-width: 89rem;
     padding: 5rem;
+    margin-bottom: 7rem;
 }
 
 .graphContainer {
@@ -20,7 +21,7 @@
     max-width: 1000vw;
     max-height: 1000vh;
     width: 70vw;
-    height: 70vh
+    height: 50vh
 }
 
 .filters {

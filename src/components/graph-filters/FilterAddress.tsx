@@ -41,7 +41,7 @@ export function FilterAddress({ addresses, onSelect, type }: SelectScrollablePro
     <DropdownMenu>
       <DropdownMenuTrigger
         style={{ backgroundColor: "#f5f5f5" }}
-        className="w-[280px] border px-3 py-2 rounded text-left text-sm"
+        className="w-[220px] border px-3 py-2 rounded text-left text-sm"
       >
         {selected.length > 0 ? `${selected.length} selected` : placeHolder}
       </DropdownMenuTrigger>
