@@ -23,16 +23,16 @@ export interface AddressData {
 
 export interface AddressInfo {
   address: Address
-  compiler_version: string
-  constructor_arguments: string
-  contract_abi: string
-  contract_bytecode: string
-  contract_name: string
-  contract_source_code: string
-  is_contract: boolean
-  is_proxy: boolean
-  is_verified: boolean
-  license_type: string
+  compilerVersion: string
+  constructorArguments: string
+  contractAbi: string
+  contractBytecode: string
+  contractName: string
+  contractSourceCode: string
+  isContract: boolean
+  isProxy: boolean
+  isVerified: boolean
+  licenseType: string
 }
 
 export const blockApi = createApi({
@@ -68,6 +68,19 @@ export const blockApi = createApi({
     }),
     getAddressInfo: builder.query<AddressInfo, string>({
       query: (address: string) => `api/metadata/address/${address}`,
+      transformResponse: (response: any): AddressInfo => ({
+        address: response.address,
+        compilerVersion: response.compiler_version,
+        constructorArguments: response.constructor_arguments,
+        contractAbi: response.contract_abi,
+        contractBytecode: response.contract_bytecode,
+        contractName: response.contract_name,
+        contractSourceCode: response.contract_source_code,
+        isContract: response.is_contract,
+        isProxy: response.is_proxy,
+        isVerified: response.is_verified,
+        licenseType: response.license_type,
+      }),
     }),
   }),
 })

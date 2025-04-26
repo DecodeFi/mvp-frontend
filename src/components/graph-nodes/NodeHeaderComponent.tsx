@@ -22,23 +22,23 @@ const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
   const id = useNodeId()
   //0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b
   const { data: addressData } = useGetAddressInfoQuery(id)
-  console.log(addressData, "woooow")
+
   let icon = ""
   switch (true) {
-    case addressData?.contract_name?.toLowerCase()?.includes("uniswap"):
+    case addressData?.contractName?.toLowerCase()?.includes("uniswap"):
       icon = uniswapIcon
       break
-    case addressData?.contract_name?.toLowerCase()?.includes("tether"):
+    case addressData?.contractName?.toLowerCase()?.includes("tether"):
       icon = tetherIcon
       break
-    case addressData?.contract_name?.toLowerCase()?.includes("weth"):
+    case addressData?.contractName?.toLowerCase()?.includes("weth"):
       icon = wethIcon
       break
-    case addressData?.contract_name?.toLowerCase()?.includes("dai"):
+    case addressData?.contractName?.toLowerCase()?.includes("dai"):
       icon = daiIcon
       break
   }
-  console.log(icon, "iconnn")
+
   const [hovered, setHovered] = useState(false)
   return (
     <BaseNode
@@ -62,7 +62,7 @@ const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
         <NodeHeaderIcon>
           {icon ? <img width={16} height={16} src={icon} /> : <Rocket />}
         </NodeHeaderIcon>
-        <NodeHeaderTitle>{addressData?.contract_name}</NodeHeaderTitle>
+        <NodeHeaderTitle>{addressData?.contractName}</NodeHeaderTitle>
 
         <NodeHeaderDeleteAction />
       </NodeHeader>

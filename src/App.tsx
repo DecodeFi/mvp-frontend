@@ -4,7 +4,7 @@ import { Header } from "./components/Header"
 import "@xyflow/react/dist/style.css"
 import { applyEdgeChanges, applyNodeChanges, Background, ReactFlow } from "@xyflow/react"
 import NodeHeaderComponent from "@/components/graph-nodes/NodeHeaderComponent"
-import { SearchBar } from "@/components/SearchBar"
+import { SearchBar } from "@/components/SearchBar/SearchBar"
 import {
   useGetAddressInfoQuery,
   useGetAddressQuery,
@@ -17,6 +17,7 @@ import { buildGraphFromData } from "@/helpers/buildGraphFromData"
 import { FilterAddress } from "@/components/graph-filters/FilterAddress"
 import { IBlockData } from "@/types/IBlockData"
 import { truncateAddress } from "@/helpers/truncateAddress"
+import { ContractTable } from "@/components/ContractTable/ContractTable"
 
 const nodeTypes = {
   nodeHeaderNode: NodeHeaderComponent,
@@ -27,7 +28,7 @@ function App() {
   const [toFilter, setToFilter] = useState<string[]>([])
   const [actionFilter, setActionFilter] = useState("")
   const [searchInput, setSearchInput] = useState("")
-  const [searchValue, setSearchValue] = useState("0xa69babef1ca67a37ffaf7a485dfff3382056e78c")
+  const [searchValue, setSearchValue] = useState("0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b")
   const searchType = detectSearchType(searchValue)
   const {
     data: blockData,
@@ -51,7 +52,7 @@ function App() {
   const { data: addressDataRaw, isLoading: isLoadingAddressDataRaw } = useGetAddressQuery(
     searchType === "address" ? searchValue : skipToken
   )
-  console.log(blockData, txDataRaw, addressDataRaw, "beeeb")
+
   const parsedTxData = useMemo(() => {
     try {
       if (txDataRaw?.result) return JSON.parse(txDataRaw.result)
@@ -89,7 +90,7 @@ function App() {
   }, [blockData, txDataRaw, addressDataRaw, fromFilter, toFilter, actionFilter])
   const [nodes_, setNodes] = useState(nodes)
   const [edges_, setEdges] = useState(edges)
-  console.log(nodes_, edges_, "dsdasdsada")
+
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
     [blockData, txDataRaw, filteredData, addressDataRaw]
@@ -154,15 +155,7 @@ function App() {
         >
           {addressData && (
             <div>
-              <div className={"flex gap-3"}>
-                <div>{truncateAddress(addressData.address, 6)}</div>
-                <div>{addressData.is_contract ? "contract" : "user"}</div>
-                <div>
-                  {addressData.is_contract && addressData.is_proxy
-                    ? "proxy"
-                    : "implementation contract"}
-                </div>
-              </div>
+              <ContractTable data={addressData} />
             </div>
           )}
         </div>

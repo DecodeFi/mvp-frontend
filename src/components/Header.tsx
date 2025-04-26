@@ -1,5 +1,3 @@
-import styles from "./Header.module.css";
-
 export const Header = () => {
   return (
     <div
@@ -25,5 +23,5 @@ export const Header = () => {
       </p>
       <p>Currently supporting Ethereum Transactions and Uniswap contracts</p>
     </div>
-  );
-};
+  )
+}

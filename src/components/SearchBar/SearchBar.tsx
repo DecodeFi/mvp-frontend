@@ -1,5 +1,4 @@
-// SearchBar.tsx
-import styles from "./Header.module.css"
+import styles from "./SearchBar.module.css"
 import searchIcon from "@/assets/search-icon.svg"
 
 type Props = {
