@@ -1,4 +1,3 @@
-import * as React from "react"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -10,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Trash } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
+import { useMemo, useState } from "react"
 
 interface SelectScrollableProps {
   addresses: string[]
@@ -18,10 +18,10 @@ interface SelectScrollableProps {
 }
 
 export function FilterAddress({ addresses, onSelect, type }: SelectScrollableProps) {
-  const [searchTerm, setSearchTerm] = React.useState("")
-  const [selected, setSelected] = React.useState<string[]>([])
+  const [searchTerm, setSearchTerm] = useState("")
+  const [selected, setSelected] = useState<string[]>([])
 
-  const filteredAddresses = React.useMemo(() => {
+  const filteredAddresses = useMemo(() => {
     return addresses?.filter((addr) => addr.toLowerCase().includes(searchTerm.toLowerCase()))
   }, [addresses, searchTerm])
 

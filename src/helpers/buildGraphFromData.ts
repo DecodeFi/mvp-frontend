@@ -75,6 +75,8 @@ export function buildGraphFromData(data, id?, setChosenAddress?) {
     edges.push({
       id: `${from}-${to}-${action}`,
       source: from,
+      sourceHandle: "source",
+      targetHandle: "target",
       animated: true,
       markerEnd: {
         type: "arrowclosed",

@@ -67,7 +67,7 @@ a:hover {
 }
 
 body {
-    margin: 0;
+
     display: flex;
     justify-content: center; /* по горизонтали */
     align-items: center;

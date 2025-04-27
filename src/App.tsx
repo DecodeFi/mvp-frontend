@@ -143,20 +143,20 @@ function App() {
         >
           <Background />
         </ReactFlow>
-        <div
-          style={{
-            marginTop: "1rem",
-            width: "60vw",
-            margin: "24px auto",
-
-            maxHeight: "60vh",
-            backgroundColor: "",
-            borderRadius: "12px",
-            border: "1px solid #FF0071",
-          }}
-        >
-          {viewAddress && <ContractTable address={viewAddress} />}
-        </div>
+        {viewAddress && (
+          <div
+            style={{
+              marginTop: "1rem",
+              width: "60vw",
+              margin: "24px auto",
+              backgroundColor: "",
+              borderRadius: "12px",
+              border: "1px solid #FF0071",
+            }}
+          >
+            <ContractTable address={viewAddress} />
+          </div>
+        )}
         {/*<ContractCodeViewer code={contractCode} />*/}
       </div>
     </div>

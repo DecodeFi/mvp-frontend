@@ -10,7 +10,7 @@ import { useGetAddressInfoQuery } from "../../../backend/apiSlice"
 import React, { useEffect, useState } from "react"
 import { truncateAddress } from "@/helpers/truncateAddress"
 import SyntaxHighlighter from "react-syntax-highlighter"
-import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs"
+import { colorBrewer } from "react-syntax-highlighter/dist/esm/styles/hljs"
 import { CopyButton } from "@/components/ui/CopyButton"
 import {
   Tooltip,
@@ -19,12 +19,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
+import { ContractSourceViewer } from "@/components/CodeViewer/CodeViewer"
 
 export function ContractTable({ address }: { address: string }) {
   const [isToggledSourceCode, setIsToggledSourceCode] = useState<boolean>(false)
   const { data } = useGetAddressInfoQuery(address)
   const cleanedRawContractSource = data?.contractSourceCode
-    .trim()
+    ?.trim()
     .replace(/^{{/, "{")
     .replace(/}}$/, "}")
 
@@ -32,6 +33,7 @@ export function ContractTable({ address }: { address: string }) {
 
   const parsed = JSON.parse(cleanedRawContractSource)
   parsedSources = parsed?.sources || {}
+  console.log(parsedSources, "parsedSources")
   const fileNames = Object.keys(parsedSources)
   const currentFileName = fileNames[0]
   const currentFileContent = parsedSources[currentFileName].content
@@ -152,17 +154,7 @@ export function ContractTable({ address }: { address: string }) {
           </TableRow>
         </TableBody>
       </Table>
-      {isToggledSourceCode && (
-        <div className={" overflow-y-auto"}>
-          <SyntaxHighlighter
-            customStyle={{ maxHeight: "400px" }}
-            language="solidity"
-            style={docco}
-          >
-            {currentFileContent}
-          </SyntaxHighlighter>
-        </div>
-      )}
+      {isToggledSourceCode && <ContractSourceViewer sources={parsedSources} />}
     </div>
   )
 }

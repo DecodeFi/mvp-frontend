@@ -1,9 +1,10 @@
 import styles from "./SearchBar.module.css"
 import searchIcon from "@/assets/search-icon.svg"
+import { ChangeEvent } from "react"
 
 type Props = {
   value: string
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void
   onSubmit: () => void
 }
 

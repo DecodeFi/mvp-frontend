@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism"
+import { FilterContracts } from "@/components/CodeViewer/FilterContracts"
+import { coy } from "react-syntax-highlighter/dist/cjs/styles/prism"
 
 interface ContractSourceViewerProps {
   sources: Record<string, { content: string }>
@@ -8,55 +9,49 @@ interface ContractSourceViewerProps {
 
 export function ContractSourceViewer({ sources }: ContractSourceViewerProps) {
   const fileNames = Object.keys(sources)
-  const [currentFileIndex, setCurrentFileIndex] = useState(0)
 
-  const currentFileName = fileNames[currentFileIndex]
-  const currentContent = sources[currentFileName]?.content || ""
+  const [selectedContract, setSelectedContract] = useState<string>(fileNames[0] || "")
+  const [searchTerm, setSearchTerm] = useState("")
 
-  const handleNext = () => {
-    setCurrentFileIndex((prev) => (prev + 1) % fileNames.length)
-  }
+  if (fileNames.length === 0) return <div>No contract files found.</div>
 
-  const handlePrevious = () => {
-    setCurrentFileIndex((prev) => (prev - 1 + fileNames.length) % fileNames.length)
+  const currentFileContent = sources[selectedContract]?.content || ""
+
+  const handleSelectContract = (contract: string) => {
+    setSelectedContract(contract)
   }
 
   return (
-    <div className="flex flex-col items-center gap-4 mt-6">
-      <div className="text-sm text-gray-500">
-        File {currentFileIndex + 1} of {fileNames.length} : {currentFileName}
+    <div className="flex flex-col gap-4 ">
+      <div>
+        <div className="text-center text-gray-600 text-sm">{selectedContract}</div>
+        <FilterContracts
+          contracts={fileNames}
+          selectedContract={selectedContract}
+          onSelectContract={handleSelectContract}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+        />
       </div>
       <div
         style={{
-          width: "100%",
-          maxHeight: "600px",
           overflowY: "auto",
-          borderRadius: "12px",
           border: "1px solid #ccc",
+          borderRadius: "15px",
         }}
       >
         <SyntaxHighlighter
           language="solidity"
-          style={vscDarkPlus}
+          customStyle={{
+            maxHeight: "450px",
+            fontSize: "small",
+            margin: 0,
+          }}
+          style={coy}
           wrapLongLines
-          customStyle={{ padding: "1rem", fontSize: "14px" }}
         >
-          {currentContent}
+          {currentFileContent}
         </SyntaxHighlighter>
-      </div>
-      <div className="flex gap-2">
-        <button
-          onClick={handlePrevious}
-          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
-        >
-          Previous
-        </button>
-        <button
-          onClick={handleNext}
-          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded"
-        >
-          Next
-        </button>
       </div>
     </div>
   )
