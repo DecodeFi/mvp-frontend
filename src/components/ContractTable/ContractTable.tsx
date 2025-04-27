@@ -1,18 +1,16 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { AddressInfo, useGetAddressInfoQuery } from "../../../backend/apiSlice"
-import { publicClient } from "@/helpers/client"
+import { useGetAddressInfoQuery } from "../../../backend/apiSlice"
 import React, { useEffect, useState } from "react"
 import { truncateAddress } from "@/helpers/truncateAddress"
-import { formatEther } from "viem"
+import SyntaxHighlighter from "react-syntax-highlighter"
+import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs"
 import { CopyButton } from "@/components/ui/CopyButton"
 import {
   Tooltip,
@@ -23,7 +21,20 @@ import {
 import { Button } from "@/components/ui/button"
 
 export function ContractTable({ address }: { address: string }) {
+  const [isToggledSourceCode, setIsToggledSourceCode] = useState<boolean>(false)
   const { data } = useGetAddressInfoQuery(address)
+  const cleanedRawContractSource = data?.contractSourceCode
+    .trim()
+    .replace(/^{{/, "{")
+    .replace(/}}$/, "}")
+
+  let parsedSources = {}
+
+  const parsed = JSON.parse(cleanedRawContractSource)
+  parsedSources = parsed?.sources || {}
+  const fileNames = Object.keys(parsedSources)
+  const currentFileName = fileNames[0]
+  const currentFileContent = parsedSources[currentFileName].content
   const [balance, setBalance] = useState<number>()
   if (!address) return null
   useEffect(() => {
@@ -55,7 +66,7 @@ export function ContractTable({ address }: { address: string }) {
   }, [data])
 
   return (
-    <div className={"p-4"}>
+    <div className={"p-4 "}>
       <Table>
         <TableHeader>
           <TableRow>
@@ -103,6 +114,7 @@ export function ContractTable({ address }: { address: string }) {
               <div>
                 {data?.contractSourceCode ? (
                   <Button
+                    onClick={() => setIsToggledSourceCode((prev) => !prev)}
                     style={{
                       border: "1px dashed #FF0071",
                       color: "#FF0071",
@@ -110,7 +122,7 @@ export function ContractTable({ address }: { address: string }) {
                       padding: "2px 4px",
                     }}
                   >
-                    Source Code
+                    {isToggledSourceCode ? "Hide Source Code" : "Source Code"}
                   </Button>
                 ) : (
                   <TooltipProvider>
@@ -140,6 +152,17 @@ export function ContractTable({ address }: { address: string }) {
           </TableRow>
         </TableBody>
       </Table>
+      {isToggledSourceCode && (
+        <div className={" overflow-y-auto"}>
+          <SyntaxHighlighter
+            customStyle={{ maxHeight: "400px" }}
+            language="solidity"
+            style={docco}
+          >
+            {currentFileContent}
+          </SyntaxHighlighter>
+        </div>
+      )}
     </div>
   )
 }

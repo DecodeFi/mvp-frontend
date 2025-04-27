@@ -6,7 +6,6 @@ import { applyEdgeChanges, applyNodeChanges, Background, ReactFlow } from "@xyfl
 import NodeHeaderComponent from "@/components/graph-nodes/NodeHeaderComponent"
 import { SearchBar } from "@/components/SearchBar/SearchBar"
 import {
-  useGetAddressInfoQuery,
   useGetAddressQuery,
   useGetLatestBlockNumberQuery,
   useGetTxsQuery,
@@ -16,9 +15,7 @@ import { detectSearchType } from "@/helpers/detectSearchType"
 import { buildGraphFromData } from "@/helpers/buildGraphFromData"
 import { FilterAddress } from "@/components/graph-filters/FilterAddress"
 import { IBlockData } from "@/types/IBlockData"
-import { truncateAddress } from "@/helpers/truncateAddress"
 import { ContractTable } from "@/components/ContractTable/ContractTable"
-import { ContractCodeViewer } from "@/components/CodeViewer/CodeViewer"
 
 const nodeTypes = {
   nodeHeaderNode: NodeHeaderComponent,
@@ -152,17 +149,13 @@ function App() {
             width: "60vw",
             margin: "24px auto",
 
-            maxHeight: "30vh",
+            maxHeight: "60vh",
             backgroundColor: "",
             borderRadius: "12px",
             border: "1px solid #FF0071",
           }}
         >
-          {viewAddress && (
-            <div>
-              <ContractTable address={viewAddress} />
-            </div>
-          )}
+          {viewAddress && <ContractTable address={viewAddress} />}
         </div>
         {/*<ContractCodeViewer code={contractCode} />*/}
       </div>
