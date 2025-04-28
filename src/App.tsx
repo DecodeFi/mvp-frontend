@@ -15,7 +15,7 @@ import { detectSearchType } from "@/helpers/detectSearchType"
 import { buildGraphFromData } from "@/helpers/buildGraphFromData"
 import { FilterAddress } from "@/components/graph-filters/FilterAddress"
 import { IBlockData } from "@/types/IBlockData"
-import { ContractTable } from "@/components/ContractTable/ContractTable"
+import { ContractTableComponent } from "@/components/ContractTable/ContractTable"
 
 const nodeTypes = {
   nodeHeaderNode: NodeHeaderComponent,
@@ -154,10 +154,9 @@ function App() {
               border: "1px solid #FF0071",
             }}
           >
-            <ContractTable address={viewAddress} />
+            <ContractTableComponent address={viewAddress} />
           </div>
         )}
-        {/*<ContractCodeViewer code={contractCode} />*/}
       </div>
     </div>
   )
