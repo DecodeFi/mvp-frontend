@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import css from "./App.module.css"
-import { Header } from "./components/Header"
+import { Header } from "./components/Header/Header"
 import "@xyflow/react/dist/style.css"
 import { applyEdgeChanges, applyNodeChanges, Background, ReactFlow } from "@xyflow/react"
-import NodeHeaderComponent from "@/components/graph-nodes/NodeHeaderComponent"
-import { SearchBar } from "@/components/SearchBar/SearchBar"
 import {
   useGetAddressQuery,
   useGetLatestBlockNumberQuery,
@@ -15,7 +13,8 @@ import { detectSearchType } from "@/helpers/detectSearchType"
 import { buildGraphFromData } from "@/helpers/buildGraphFromData"
 import { FilterAddress } from "@/components/graph-filters/FilterAddress"
 import { IBlockData } from "@/types/IBlockData"
-import { ContractTableComponent } from "@/components/ContractTable/ContractTable"
+import NodeHeaderComponent from "@/components/graph-nodes/NodeHeaderComponent"
+import { ContractTableComponent, SearchBar } from "@/components"
 
 const nodeTypes = {
   nodeHeaderNode: NodeHeaderComponent,

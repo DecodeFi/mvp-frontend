@@ -1,10 +1,10 @@
 import React, { useState } from "react"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
-import { FilterContracts } from "@/components/CodeViewer/FilterContracts"
 import { coy } from "react-syntax-highlighter/dist/cjs/styles/prism"
+import { FilterContracts } from "@/components"
 
 interface ContractSourceViewerProps {
-  sources: Record<string, { content: string }>
+  sources: Record<string, { content?: string }>
 }
 
 export function ContractSourceViewer({ sources }: ContractSourceViewerProps) {
@@ -15,12 +15,13 @@ export function ContractSourceViewer({ sources }: ContractSourceViewerProps) {
 
   if (fileNames.length === 0) return <div>No contract files found.</div>
 
-  const currentFileContent = sources[selectedContract]?.content || ""
-
+  const currentFileContent =
+    sources[selectedContract]?.content || sources[selectedContract] || ""
+  console.log(currentFileContent, "currentFileContent")
   const handleSelectContract = (contract: string) => {
     setSelectedContract(contract)
   }
-
+  console.log(selectedContract, "selectedContract")
   return (
     <div className="flex flex-col gap-4 ">
       <div>
@@ -50,7 +51,7 @@ export function ContractSourceViewer({ sources }: ContractSourceViewerProps) {
           style={coy}
           wrapLongLines
         >
-          {currentFileContent}
+          {currentFileContent as string}
         </SyntaxHighlighter>
       </div>
     </div>
