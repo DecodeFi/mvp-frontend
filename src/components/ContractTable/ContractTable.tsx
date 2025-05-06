@@ -38,7 +38,7 @@ const ContractTable = ({ address }: { address: string }) => {
     : { [data.contractName]: cleanedRawContractSource }
 
   return (
-    <div className="p-4">
+    <div className="p-4 ">
       <Table>
         <TableHeader>
           <TableRow>

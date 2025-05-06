@@ -128,35 +128,37 @@ function App() {
           type="to"
         />
       </div>
-      <div className={css.graphContainer}>
-        <style>{`.react-flow__attribution { display: none !important; }`}</style>
-        <style>{`.react-flow__node {user-select: text !important;}`}</style>
-        <style>{`.react-flow__node.draggable {cursor: default !important;}`}</style>
-        <ReactFlow
-          onEdgesChange={onEdgesChange}
-          onNodesChange={onNodesChange}
-          nodes={nodes_}
-          edges={edges_}
-          nodeTypes={nodeTypes}
-          onInit={(instance) => instance.setViewport({ x: 300, y: 0, zoom: 0.5 })}
-        >
-          <Background />
-        </ReactFlow>
-        {viewAddress && (
-          <div
-            style={{
-              marginTop: "1rem",
-              width: "60vw",
-              margin: "24px auto",
-              backgroundColor: "",
-              borderRadius: "12px",
-              border: "1px solid #FF0071",
-            }}
+      <div className="w-full flex justify-center">
+        <div className={css.graphContainer}>
+          <style>{`.react-flow__attribution { display: none !important; }`}</style>
+          <style>{`.react-flow__node {user-select: text !important;}`}</style>
+          <style>{`.react-flow__node.draggable {cursor: default !important;}`}</style>
+          <ReactFlow
+            onEdgesChange={onEdgesChange}
+            onNodesChange={onNodesChange}
+            nodes={nodes_}
+            edges={edges_}
+            nodeTypes={nodeTypes}
+            onInit={(instance) => instance.setViewport({ x: 300, y: 0, zoom: 0.5 })}
           >
-            <ContractTableComponent address={viewAddress} />
-          </div>
-        )}
+            <Background />
+          </ReactFlow>
+        </div>
       </div>
+      {viewAddress && (
+        <div
+          style={{
+            marginTop: "1rem",
+            width: "50vw",
+            margin: "24px auto",
+            backgroundColor: "",
+            borderRadius: "12px",
+            border: "1px solid #FF0071",
+          }}
+        >
+          <ContractTableComponent address={viewAddress} />
+        </div>
+      )}
     </div>
   )
 }
