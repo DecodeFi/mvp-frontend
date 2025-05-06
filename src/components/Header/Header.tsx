@@ -21,7 +21,9 @@ export const Header = () => {
       >
         GraphChain
       </p>
-      <p>Currently supporting Ethereum Transactions and Uniswap contracts</p>
+      <p style={{ textAlign: "center" }}>
+        Currently supporting Ethereum Transactions and Uniswap contracts
+      </p>
     </div>
   )
 }

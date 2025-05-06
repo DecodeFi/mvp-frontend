@@ -37,7 +37,7 @@ export interface AddressInfo {
 
 export const blockApi = createApi({
   reducerPath: "blockApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://51.250.109.234:3443/" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "https://45.144.31.133:3443/" }),
   endpoints: (builder) => ({
     getLatestBlockNumber: builder.query<
       {

@@ -12,23 +12,24 @@ export const FilterContracts = ({
   onSelectContract,
   searchTerm,
   setSearchTerm,
+  placeHolder = "Filter contracts",
 }: {
   contracts: string[]
   selectedContract: string
   onSelectContract: (contract: string) => void
   searchTerm: string
   setSearchTerm: (term: string) => void
+  placeHolder?: string
 }) => {
-  const filteredContracts = contracts.filter((contract) =>
+  const filteredContracts = contracts?.filter((contract) =>
     contract.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  const placeHolder = "Filter contracts"
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         style={{ backgroundColor: "#f5f5f5" }}
-        className="w-[150px] h-[30px] flex items-center border px-3 py-2 rounded text-left text-sm"
+        className="w-[180px] h-[30px] flex items-center border px-3 py-2 rounded text-left text-sm"
       >
         {placeHolder}
       </DropdownMenuTrigger>

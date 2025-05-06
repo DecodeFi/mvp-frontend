@@ -27,7 +27,6 @@ function App() {
   const [searchInput, setSearchInput] = useState("")
   const [searchValue, setSearchValue] = useState("0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b")
   const [viewAddress, setViewAddress] = useState<string>("")
-  console.log(viewAddress, "viewAddress")
   const searchType = detectSearchType(searchValue)
   const {
     data: blockData,
@@ -105,6 +104,7 @@ function App() {
       <div className="flex justify-center">
         <SearchBar
           value={searchInput}
+          className="w-4/5"
           onChange={(e) => setSearchInput(e.target.value)}
           onSubmit={() => {
             setSearchValue(searchInput)
@@ -116,7 +116,7 @@ function App() {
         <div>loading...</div>
       )}
 
-      <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+      <div className="flex items-center justify-center gap-6 flex-col sm:flex-row">
         <FilterAddress
           addresses={rawData?.map(({ from_addr }) => from_addr)}
           onSelect={setFromFilter}
