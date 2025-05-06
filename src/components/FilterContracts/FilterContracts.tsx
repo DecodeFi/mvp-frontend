@@ -21,6 +21,7 @@ export const FilterContracts = ({
   setSearchTerm: (term: string) => void
   placeHolder?: string
 }) => {
+  if (!contracts) return null
   const filteredContracts = contracts?.filter((contract) =>
     contract.toLowerCase().includes(searchTerm.toLowerCase())
   )

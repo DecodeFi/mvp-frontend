@@ -66,9 +66,9 @@ export function ContractSourceViewer({ sources }: ContractSourceViewerProps) {
                 setSearchValue(searchInput)
               }}
             />{" "}
-            {parsedSources && (
+            {parsedSources && !Object.keys(parsedSources).includes("undefined") && (
               <FilterContracts
-                contracts={parsedSources}
+                contracts={Object.keys(parsedSources)}
                 selectedContract={compareToContract}
                 onSelectContract={setCompareToContract}
                 searchTerm={searchTerm}
