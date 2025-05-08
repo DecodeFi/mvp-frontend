@@ -27,6 +27,7 @@ function App() {
   const [searchInput, setSearchInput] = useState("")
   const [searchValue, setSearchValue] = useState("0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b")
   const [viewAddress, setViewAddress] = useState<string>("")
+  const [isOpenTable, setIsOpenTable] = useState<boolean>(false)
   const searchType = detectSearchType(searchValue)
   const {
     data: blockData,
@@ -97,14 +98,13 @@ function App() {
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     [blockData, txDataRaw, filteredData, addressDataRaw]
   )
-
   return (
     <div className={css.container}>
       <Header />
       <div className="flex justify-center">
         <SearchBar
           value={searchInput}
-          className="w-4/5"
+          className="w-2/5"
           onChange={(e) => setSearchInput(e.target.value)}
           onSubmit={() => {
             setSearchValue(searchInput)
@@ -156,7 +156,7 @@ function App() {
             border: "1px solid #FF0071",
           }}
         >
-          <ContractTableComponent address={viewAddress} />
+          <ContractTableComponent address={viewAddress} setIsOpenTable={setViewAddress} />
         </div>
       )}
     </div>

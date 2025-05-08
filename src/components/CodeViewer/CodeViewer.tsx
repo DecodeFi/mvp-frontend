@@ -31,42 +31,53 @@ export function ContractSourceViewer({ sources }: ContractSourceViewerProps) {
 
   const currentFileContent = sources[selectedContract]?.content || ""
   const compareToContent = parsedSources[compareToContract]?.content || ""
-  console.log(parsedSources, fileNames, "currentFileContentcompareToContent")
+  const isDiffMode = viewMode === "diff"
   if (fileNames.length === 0) return <div>No contract files found.</div>
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-4 items-center justify-between">
         <div className="text-sm text-gray-600">Mode:</div>
-        <button onClick={() => setViewMode("view")} className="px-2 py-1 border rounded">
+        <button
+          style={{ borderColor: !isDiffMode && "#FF0071" }}
+          onClick={() => setViewMode("view")}
+          className="px-2 py-1 border rounded"
+        >
           View
         </button>
-        <button onClick={() => setViewMode("diff")} className="px-2 py-1 border rounded">
+        <button
+          style={{ borderColor: isDiffMode && "#FF0071" }}
+          onClick={() => setViewMode("diff")}
+          className="px-2 py-1 border rounded"
+        >
           Compare
         </button>
       </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+      {viewMode === "diff" && (
+        <div className="m-auto">
+          <SearchBar
+            placeholder="insert the address to compare"
+            value={searchInput}
+            className="w-[300px]"
+            onChange={(e) => setSearchInput(e.target.value)}
+            onSubmit={() => {
+              setSearchValue(searchInput)
+            }}
+          />
+        </div>
+      )}
+      <div className="flex justify-between gap-4 items-center">
         <FilterContracts
           contracts={fileNames}
-          placeHolder="Choose a contract"
+          placeHolder="Choose the file"
           selectedContract={selectedContract}
           onSelectContract={setSelectedContract}
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
         />
-
-        {viewMode === "diff" && (
-          <div>
-            <SearchBar
-              placeholder="insert the address for a contract"
-              value={searchInput}
-              className="w-[300px]"
-              onChange={(e) => setSearchInput(e.target.value)}
-              onSubmit={() => {
-                setSearchValue(searchInput)
-              }}
-            />{" "}
-            {parsedSources && !Object.keys(parsedSources).includes("undefined") && (
+        <div className="flex items-center gap-3">
+          {viewMode === "diff" &&
+            parsedSources &&
+            !Object.keys(parsedSources).includes("undefined") && (
               <FilterContracts
                 contracts={Object.keys(parsedSources)}
                 selectedContract={compareToContract}
@@ -75,8 +86,7 @@ export function ContractSourceViewer({ sources }: ContractSourceViewerProps) {
                 setSearchTerm={setSearchTerm}
               />
             )}
-          </div>
-        )}
+        </div>
       </div>
 
       {viewMode === "view" && (

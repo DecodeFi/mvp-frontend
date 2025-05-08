@@ -9,7 +9,7 @@
     font-weight: 400;
 
     color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
+    color: black;
     background-color: white;
 
     font-synthesis: none;
@@ -88,6 +88,7 @@ button {
     padding: 0.6em 1.2em;
     background-color: white;
     font-size: 1em;
+    color: black;
     font-weight: 500;
     font-family: inherit;
     cursor: pointer;

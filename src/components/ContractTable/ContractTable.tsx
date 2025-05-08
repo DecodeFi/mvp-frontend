@@ -16,8 +16,15 @@ import {
   ContractSourceViewer,
   SourceCodeToggleButton,
 } from "@/components"
+import { Button } from "@/components/ui/button"
 
-const ContractTable = ({ address }: { address: string }) => {
+const ContractTable = ({
+  address,
+  setIsOpenTable,
+}: {
+  address: string
+  setIsOpenTable: (boolean) => void
+}) => {
   const [isToggledSourceCode, setIsToggledSourceCode] = useState(false)
   const { data } = useGetAddressInfoQuery(address)
   const balance = useBalance(address)
@@ -38,7 +45,13 @@ const ContractTable = ({ address }: { address: string }) => {
     : { [data.contractName]: cleanedRawContractSource }
 
   return (
-    <div className="p-4 ">
+    <div className="px-4 pt-8 pb-4 relative">
+      <Button
+        onClick={() => setIsOpenTable("")}
+        style={{ position: "absolute", right: "5px", top: "5px" }}
+      >
+        <p>X</p>
+      </Button>
       <Table>
         <TableHeader>
           <TableRow>
