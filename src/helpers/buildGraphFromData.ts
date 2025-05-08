@@ -36,6 +36,21 @@ export function buildGraphFromData(data, id?, setChosenAddress?) {
       yOffsetFrom += 1
     }
 
+    // Assign from node
+    if (!nodesMap.has(storage)) {
+      const yFrom = id === storage ? 100 : yOffsetFrom * yStep
+      const xTo = id === storage ? 100 : -300
+      positionsMap.set(storage, { x: xTo, y: yFrom + 300 })
+      nodesMap.set(storage, {
+        id: storage,
+        type: "nodeHeaderNode",
+        data: { label: storage, setChosenAddress: setChosenAddress },
+        dragHandle: ".drag-handle",
+        position: positionsMap.get(storage),
+      })
+      yOffsetFrom += 1
+    }
+
     // Assign to node
     if (!nodesMap.has(to)) {
       const yTo = yOffsetTo * yStep
@@ -50,48 +65,42 @@ export function buildGraphFromData(data, id?, setChosenAddress?) {
       yOffsetTo += 1
     }
 
-    // // Assign storage node if needed
-    // if (action === "delegate_call" && !nodesMap.has(storage)) {
-    //   const yStorage = (yOffsetTo + 1) * yStep
-    //   positionsMap.set(storage, { x: 250, y: yStorage })
-    //   nodesMap.set(storage, {
-    //     id: storage,
-    //     type: "nodeHeaderNode",
-    //     data: { label: storage },
-    //     dragHandle: ".drag-handle",
-    //     position: positionsMap.get(storage),
-    //   })
-    //   yOffsetTo += 1
-    // }
+    let color = "#FF0071"
+    let edge_id = `${from}-${to}-${action}`
+    let source = from
     if (action === "delegate_call") {
-      edges.push({
-        id: `${from}-${storage}-${to}-${action}`,
-        source: storage,
-        target: to,
-        label: `delegate_call (${truncateAddress(hash, 5)})`,
-      })
+      edge_id = `${storage}-${to}-${action}`
+      source = storage
+      color = "#0079FF"
+    } else if (action === "create" || action == "create2") {
+      console.log(action)
+      color = "#16C47F"
+    } 
+
+    
+    if (source == to) {
+      continue
     }
-    // Edge: from -> to
+
     edges.push({
-      id: `${from}-${to}-${action}`,
-      source: from,
+      id: edge_id,
+      source: source,
       sourceHandle: "source",
       targetHandle: "target",
       animated: true,
       markerEnd: {
         type: "arrowclosed",
-        color: "#FF0071",
+        color: color,
         width: 20,
         height: 20,
       },
       style: {
-        stroke: "#FF0071",
+        stroke: color,
       },
       target: to,
-      label: `${action} (${truncateAddress(hash, 5)})`,
+      label: `${action}`,
     })
 
-    // Edge: storage -> to if delegate_call
   }
 
   return {
