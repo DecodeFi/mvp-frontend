@@ -15,6 +15,7 @@ import { FilterAddress } from "@/components/graph-filters/FilterAddress"
 import { IBlockData } from "@/types/IBlockData"
 import NodeHeaderComponent from "@/components/graph-nodes/NodeHeaderComponent"
 import { ContractTableComponent, SearchBar } from "@/components"
+import { Button } from "@/components/ui/button"
 
 const nodeTypes = {
   nodeHeaderNode: NodeHeaderComponent,
@@ -98,6 +99,40 @@ function App() {
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     [blockData, txDataRaw, filteredData, addressDataRaw]
   )
+  const sendSnapshot = useCallback(
+    async (snapshotName: string, nodes_: any[]) => {
+      const snapshot_nodes = nodes_
+        .filter((n) => n.id && n.position)
+        .map((node) => ({
+          x: node.position.x,
+          y: node.position.y,
+          address: node.id,
+        }))
+
+      const body = {
+        snapshot_name: snapshotName,
+        snapshot_nodes,
+      }
+
+      try {
+        const res = await fetch("https://45.144.31.133:3443/api/addresses/snapshot", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        })
+
+        if (!res.ok) throw new Error("Snapshot failed")
+        console.log("✅ Snapshot sent")
+      } catch (err) {
+        console.error("❌ Snapshot error:", err)
+      }
+    },
+    [nodes_]
+  )
+
+  console.log(nodes_, "nodes_")
   return (
     <div className={css.container}>
       <Header />
@@ -105,6 +140,7 @@ function App() {
         <SearchBar
           value={searchInput}
           className="w-2/5"
+          clearValue={() => setSearchInput("")}
           onChange={(e) => setSearchInput(e.target.value)}
           onSubmit={() => {
             setSearchValue(searchInput)
@@ -115,7 +151,12 @@ function App() {
       {(isLoadingBLockData || isLoadingAddressDataRaw || isLoadingTxDataRaw) && (
         <div>loading...</div>
       )}
-
+      <Button
+        style={{ width: "8rem", margin: "auto" }}
+        onClick={() => sendSnapshot("Snapshot_" + new Date().toISOString(), nodes_)}
+      >
+        send snapshot
+      </Button>
       <div className="flex items-center justify-center gap-6 flex-col sm:flex-row">
         <FilterAddress
           addresses={rawData?.map(({ from_addr }) => from_addr)}

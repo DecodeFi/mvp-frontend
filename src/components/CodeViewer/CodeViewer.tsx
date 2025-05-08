@@ -57,6 +57,7 @@ export function ContractSourceViewer({ sources }: ContractSourceViewerProps) {
           <SearchBar
             placeholder="insert the address to compare"
             value={searchInput}
+            clearValue={() => setSearchInput("")}
             className="w-[300px]"
             onChange={(e) => setSearchInput(e.target.value)}
             onSubmit={() => {
