@@ -27,17 +27,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-function getSecurityColor(score: number = 0): string {
-  // Нормализуем: 0 (лучший) → 1, 10000 (худший) → 0
-  const t = Math.max(0, Math.min(1, 1 - score / 10000))
-
-  // Интерполяция между:
-  // зелёный (#00ff5f) → бордовый (#7a0026)
-  const r = Math.round(0x7a * (1 - t) + 0x00 * t)
-  const g = Math.round(0x00 * (1 - t) + 0xff * t)
-  const b = Math.round(0x26 * (1 - t) + 0x5f * t)
-
-  return `rgb(${r}, ${g}, ${b})`
+function getSecurityLevelEmoji(score?: number): string {
+  if (score === undefined || score === null) return "🔴" // unknown = high risk
+  if (score <= 3000) return "🟢" // good
+  if (score <= 7000) return "🟡" // medium
+  return "🔴" // bad
 }
 
 const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
@@ -47,6 +41,18 @@ const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
   const { label, setChosenAddress } = data as {
     label: string
     setChosenAddress: (address: string) => void
+  }
+  let securityStatus
+  switch (true) {
+    case securityCheckInfo?.score > 0 && securityCheckInfo?.score < 3500:
+      securityStatus = "The contract is safe"
+      break
+    case securityCheckInfo?.score > 3500 && securityCheckInfo?.score < 6500:
+      securityStatus = "The contract might be dangerous"
+      break
+    case securityCheckInfo?.score > 6500 || !securityCheckInfo?.score:
+      securityStatus = "Be careful"
+      break
   }
 
   let icon = ""
@@ -116,10 +122,13 @@ const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <ShieldEllipsis color={getSecurityColor(securityCheckInfo?.score)} />
+                <span>{getSecurityLevelEmoji(securityCheckInfo?.score)}</span>
               </TooltipTrigger>
               <TooltipContent>
-                <p>The contract is secure {securityCheckInfo?.score}</p>
+                <p>
+                  Contract's score is {securityCheckInfo?.score || "undefined"}.{" "}
+                  {securityStatus}
+                </p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
