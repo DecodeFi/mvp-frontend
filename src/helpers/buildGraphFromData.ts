@@ -1,5 +1,3 @@
-import { truncateAddress } from "@/helpers/truncateAddress"
-
 export function buildGraphFromData(data, id?, setChosenAddress?) {
   if (!data?.length) return { nodes: [], edges: [] }
 

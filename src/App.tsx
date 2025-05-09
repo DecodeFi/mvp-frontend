@@ -28,7 +28,6 @@ function App() {
   const [searchInput, setSearchInput] = useState("")
   const [searchValue, setSearchValue] = useState("0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b")
   const [viewAddress, setViewAddress] = useState<string>("")
-  const [isOpenTable, setIsOpenTable] = useState<boolean>(false)
   const searchType = detectSearchType(searchValue)
   const {
     data: blockData,
