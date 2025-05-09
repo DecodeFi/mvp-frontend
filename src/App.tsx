@@ -83,7 +83,6 @@ function App() {
       return buildGraphFromData(item, searchValue, setViewAddress, index * 100)
     })
   }, [cachedData])
-  console.log(cachedData, beba, "cachedData")
   const filteredData: IBlockData[] = rawData?.filter((tx) => {
     return (
       (!fromFilter.length || fromFilter.includes(tx.from_addr)) &&
@@ -167,6 +166,20 @@ function App() {
         onClick={() => sendSnapshot("Snapshot_" + new Date().toISOString(), nodes_)}
       >
         send snapshot
+      </Button>
+      <Button
+        style={{ width: "8rem", margin: "auto", marginTop: "1rem" }}
+        variant="outline"
+        onClick={() => {
+          setCachedData([])
+          setNodes([])
+          setEdges([])
+          setSearchValue("")
+          setSearchInput("")
+          setViewAddress("")
+        }}
+      >
+        Clear Graph
       </Button>
       <div className="flex items-center justify-center gap-6 flex-col sm:flex-row">
         <FilterAddress
