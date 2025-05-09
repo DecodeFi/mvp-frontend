@@ -73,11 +73,9 @@ export function buildGraphFromData(data, id?, setChosenAddress?) {
       source = storage
       color = "#0079FF"
     } else if (action === "create" || action == "create2") {
-      console.log(action)
       color = "#16C47F"
-    } 
+    }
 
-    
     if (source == to) {
       continue
     }
@@ -100,7 +98,6 @@ export function buildGraphFromData(data, id?, setChosenAddress?) {
       target: to,
       label: `${action}`,
     })
-
   }
 
   return {

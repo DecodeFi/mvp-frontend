@@ -21,6 +21,11 @@ export interface AddressData {
   traces: Trace[]
 }
 
+export interface SecurityCheckInfo {
+  address: string
+  score: number
+}
+
 export interface AddressInfo {
   address: Address
   compilerVersion: string
@@ -66,6 +71,9 @@ export const blockApi = createApi({
     getAddress: builder.query<AddressData, string>({
       query: (address: string) => `api/trace?address=${address}`,
     }),
+    getSecurityCheck: builder.query<SecurityCheckInfo, string>({
+      query: (address: string) => `api/security/check/${address}`,
+    }),
     getAddressInfo: builder.query<AddressInfo, string>({
       query: (address: string) => `api/metadata/address/${address}`,
       transformResponse: (response: any): AddressInfo => ({
@@ -89,4 +97,5 @@ export const {
   useGetAddressQuery,
   useGetLatestBlockNumberQuery,
   useGetAddressInfoQuery,
+  useGetSecurityCheckQuery,
 } = blockApi

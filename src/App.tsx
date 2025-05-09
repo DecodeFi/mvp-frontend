@@ -132,7 +132,6 @@ function App() {
     [nodes_]
   )
 
-  console.log(nodes_, "nodes_")
   return (
     <div className={css.container}>
       <Header />
