@@ -74,6 +74,9 @@ export const blockApi = createApi({
     getSecurityCheck: builder.query<SecurityCheckInfo, string>({
       query: (address: string) => `api/security/check/${address}`,
     }),
+    getSnapshot: builder.query<any, string>({
+      query: (snapshotName: string) => `api/snapshot/${snapshotName}`,
+    }),
     getAddressInfo: builder.query<AddressInfo, string>({
       query: (address: string) => `api/metadata/address/${address}`,
       transformResponse: (response: any): AddressInfo => ({
@@ -98,4 +101,5 @@ export const {
   useGetLatestBlockNumberQuery,
   useGetAddressInfoQuery,
   useGetSecurityCheckQuery,
+  useGetSnapshotQuery,
 } = blockApi

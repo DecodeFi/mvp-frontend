@@ -6,16 +6,18 @@ import { applyEdgeChanges, applyNodeChanges, Background, ReactFlow } from "@xyfl
 import {
   useGetAddressQuery,
   useGetLatestBlockNumberQuery,
+  useGetSnapshotQuery,
   useGetTxsQuery,
 } from "../backend/apiSlice"
 import { skipToken } from "@reduxjs/toolkit/query"
-import { detectSearchType } from "@/helpers/detectSearchType"
 import { buildGraphFromData } from "@/helpers/buildGraphFromData"
 import { FilterAddress } from "@/components/graph-filters/FilterAddress"
 import { IBlockData } from "@/types/IBlockData"
 import NodeHeaderComponent from "@/components/graph-nodes/NodeHeaderComponent"
 import { ContractTableComponent, SearchBar } from "@/components"
 import { Button } from "@/components/ui/button"
+import { buildGraphFromSnapshot } from "@/helpers/buildGraphFromSnapshot"
+import { detectSearchType } from "@/helpers/detectSearchType"
 
 const nodeTypes = {
   nodeHeaderNode: NodeHeaderComponent,
@@ -29,7 +31,7 @@ function App() {
   const [searchValue, setSearchValue] = useState("0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b")
   const [viewAddress, setViewAddress] = useState<string>("")
   const [cachedData, setCachedData] = useState<IBlockData[][]>([])
-
+  const [snapShotName, setSnapShotName] = useState<string>("")
   const searchType = detectSearchType(searchValue)
   const {
     data: blockData,
@@ -54,6 +56,10 @@ function App() {
     searchType === "address" ? searchValue : skipToken
   )
 
+  const { data: snapshotData } = useGetSnapshotQuery(
+    searchType === "snapshot" ? searchValue : skipToken
+  )
+  console.log(snapshotData, "snapshotData")
   const parsedTxData = useMemo(() => {
     try {
       if (txDataRaw?.result) return JSON.parse(txDataRaw.result)
@@ -100,6 +106,13 @@ function App() {
     if (blockData || addressDataRaw) setNodes(nodes)
     setEdges(edges)
   }, [blockData, txDataRaw, addressDataRaw, cachedData, fromFilter, toFilter, actionFilter])
+  useEffect(() => {
+    if (searchType === "snapshot" && snapshotData) {
+      const { nodes, edges } = buildGraphFromSnapshot(snapshotData, setViewAddress, 0)
+      setNodes(nodes)
+      setEdges(edges)
+    }
+  }, [snapshotData, searchType])
   const [nodes_, setNodes] = useState(nodes)
   const [edges_, setEdges] = useState(edges)
 
@@ -125,7 +138,7 @@ function App() {
         snapshot_name: snapshotName,
         snapshot_nodes,
       }
-
+      console.log(body, "body")
       try {
         const res = await fetch("https://45.144.31.133:3443/api/addresses/snapshot", {
           method: "POST",
@@ -136,7 +149,7 @@ function App() {
         })
 
         if (!res.ok) throw new Error("Snapshot failed")
-        console.log("✅ Snapshot sent")
+        console.log("✅ Snapshot sent", res)
       } catch (err) {
         console.error("❌ Snapshot error:", err)
       }
@@ -163,10 +176,18 @@ function App() {
       )}
       <Button
         style={{ width: "8rem", margin: "auto" }}
-        onClick={() => sendSnapshot("Snapshot_" + new Date().toISOString(), nodes_)}
+        onClick={() => sendSnapshot(snapShotName, nodes_)}
       >
         send snapshot
       </Button>
+      <input
+        value={snapShotName}
+        placeholder="insert the snapshot name"
+        style={{ width: "30%", margin: "auto", backgroundColor: "#f5f5f5" }}
+        onChange={(e) => {
+          setSnapShotName(e.target.value)
+        }}
+      />
       <Button
         style={{ width: "8rem", margin: "auto", marginTop: "1rem" }}
         variant="outline"
