@@ -28,6 +28,8 @@ function App() {
   const [searchInput, setSearchInput] = useState("")
   const [searchValue, setSearchValue] = useState("0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b")
   const [viewAddress, setViewAddress] = useState<string>("")
+  const [cachedData, setCachedData] = useState<IBlockData[][]>([])
+
   const searchType = detectSearchType(searchValue)
   const {
     data: blockData,
@@ -70,6 +72,18 @@ function App() {
           ? addressDataRaw?.traces
           : []
 
+  useEffect(() => {
+    if (rawData?.length) {
+      setCachedData((prev) => [...prev, rawData])
+    }
+  }, [rawData])
+
+  const beba = useMemo(() => {
+    return cachedData?.map((item, index) => {
+      return buildGraphFromData(item, searchValue, setViewAddress, index * 100)
+    })
+  }, [cachedData])
+  console.log(cachedData, beba, "cachedData")
   const filteredData: IBlockData[] = rawData?.filter((tx) => {
     return (
       (!fromFilter.length || fromFilter.includes(tx.from_addr)) &&
@@ -77,26 +91,26 @@ function App() {
       (!actionFilter || tx.action === actionFilter)
     )
   })
-
-  const { nodes, edges } = useMemo(
-    () => buildGraphFromData(filteredData, searchValue, setViewAddress),
-    [filteredData]
-  )
+  const { nodes, edges } = useMemo(() => {
+    const allNodes = beba?.flatMap(({ nodes }) => nodes)
+    const allEdges = beba?.flatMap(({ edges }) => edges)
+    return { nodes: allNodes, edges: allEdges }
+  }, [beba])
 
   useEffect(() => {
     if (blockData || addressDataRaw) setNodes(nodes)
     setEdges(edges)
-  }, [blockData, txDataRaw, addressDataRaw, fromFilter, toFilter, actionFilter])
+  }, [blockData, txDataRaw, addressDataRaw, cachedData, fromFilter, toFilter, actionFilter])
   const [nodes_, setNodes] = useState(nodes)
   const [edges_, setEdges] = useState(edges)
 
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    [blockData, txDataRaw, filteredData, addressDataRaw]
+    [blockData, txDataRaw, filteredData, cachedData, addressDataRaw]
   )
   const onEdgesChange = useCallback(
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    [blockData, txDataRaw, filteredData, addressDataRaw]
+    [blockData, txDataRaw, filteredData, cachedData, addressDataRaw]
   )
   const sendSnapshot = useCallback(
     async (snapshotName: string, nodes_: any[]) => {
@@ -130,7 +144,6 @@ function App() {
     },
     [nodes_]
   )
-
   return (
     <div className={css.container}>
       <Header />
