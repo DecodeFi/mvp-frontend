@@ -13,6 +13,7 @@ import {
 import * as React from "react"
 import { useGetAddressQuery, useLazyGetAddressQuery } from "../../../backend/apiSlice"
 import { buildGraphFromData } from "@/helpers/buildGraphFromData"
+import { concatEdges, concatNodes } from "@/helpers/concatGraph"
 
 /* NODE HEADER -------------------------------------------------------------- */
 
@@ -191,18 +192,18 @@ export const NodeHeaderAddNodeOut = () => {
   const id = useNodeId()
   const { setNodes, setEdges, getNode } = useReactFlow()
   const [trigger] = useLazyGetAddressQuery()
-  const node = getNode(id)
 
   const handleClick = useCallback(async () => {
+    const node = getNode(id)
     if (!node?.data?.label) return
     const result = await trigger(node.data.label as string).unwrap()
-    const { nodes, edges } = buildGraphFromData(result?.traces, id, undefined, 500)
+    const { nodes, edges } = buildGraphFromData(result?.traces, id, undefined, node.position)
     const outgoingEdges = edges.filter((edge) => edge.source === node.data.label)
     const targets = outgoingEdges.map((edge) => edge.target)
     const filteredNodes = nodes.filter((n) => targets.includes(n.id))
-    setNodes((oldNodes) => [...oldNodes, ...filteredNodes])
-    setEdges((oldEdges) => [...oldEdges, ...outgoingEdges])
-  }, [node, trigger, setNodes, setEdges])
+    setNodes((oldNodes) => concatNodes(oldNodes, filteredNodes))
+    setEdges((oldEdges) => concatEdges(oldEdges, outgoingEdges))
+  }, [trigger, setNodes, setEdges])
   return (
     <NodeHeaderAction
       onClick={handleClick}
@@ -217,19 +218,19 @@ export const NodeHeaderAddNodeIn = () => {
   const id = useNodeId()
   const { setNodes, setEdges, getNode } = useReactFlow()
   const [trigger] = useLazyGetAddressQuery()
-  const node = getNode(id)
 
   const handleClick = useCallback(async () => {
+    const node = getNode(id)
     if (!node?.data?.label) return
     const result = await trigger(node.data.label as string).unwrap()
-    const { nodes, edges } = buildGraphFromData(result?.traces, id, undefined, 300)
+    const { nodes, edges } = buildGraphFromData(result?.traces, id, undefined, node.position)
     const outgoingEdges = edges.filter((edge) => edge.target === node.data.label)
     const targets = outgoingEdges.map((edge) => edge.source)
     const filteredNodes = nodes.filter((n) => targets.includes(n.id))
 
-    setNodes((oldNodes) => [...oldNodes, ...filteredNodes])
-    setEdges((oldEdges) => [...oldEdges, ...outgoingEdges])
-  }, [node, trigger, setNodes, setEdges])
+    setNodes((oldNodes) => concatNodes(oldNodes, filteredNodes))
+    setEdges((oldEdges) => concatEdges(oldEdges, outgoingEdges))
+  }, [trigger, setNodes, setEdges])
 
   return (
     <NodeHeaderAction

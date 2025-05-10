@@ -18,6 +18,7 @@ import { ContractTableComponent, SearchBar } from "@/components"
 import { Button } from "@/components/ui/button"
 import { buildGraphFromSnapshot } from "@/helpers/buildGraphFromSnapshot"
 import { detectSearchType } from "@/helpers/detectSearchType"
+import { concatEdges, concatNodes } from "./helpers/concatGraph"
 
 const nodeTypes = {
   nodeHeaderNode: NodeHeaderComponent,
@@ -30,7 +31,7 @@ function App() {
   const [searchInput, setSearchInput] = useState("")
   const [searchValue, setSearchValue] = useState("0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b")
   const [viewAddress, setViewAddress] = useState<string>("")
-  const [cachedData, setCachedData] = useState<IBlockData[][]>([])
+  const [cachedData, setCachedData] = useState<any[]>([])
   const [snapShotName, setSnapShotName] = useState<string>("")
   const searchType = detectSearchType(searchValue)
   const {
@@ -79,13 +80,13 @@ function App() {
 
   useEffect(() => {
     if (rawData?.length) {
-      setCachedData((prev) => [...prev, rawData])
+      setCachedData((prev) => [...prev, {data: rawData, focus: searchValue}])
     }
   }, [rawData])
 
   const combinedGraphData = useMemo(() => {
     return cachedData?.map((item, index) => {
-      return buildGraphFromData(item, searchValue, setViewAddress, index * 100)
+      return buildGraphFromData(item.data, item.focus, setViewAddress, {y: 1000 * index, x: 1000 * index})
     })
   }, [cachedData])
   const filteredData: IBlockData[] = rawData?.filter((tx) => {
@@ -96,8 +97,12 @@ function App() {
     )
   })
   const { nodes, edges } = useMemo(() => {
-    const allNodes = combinedGraphData?.flatMap(({ nodes }) => nodes)
-    const allEdges = combinedGraphData?.flatMap(({ edges }) => edges)
+    let allNodes = []
+    let allEdges = []
+    for (let graph of combinedGraphData) {
+      allNodes = concatNodes(allNodes, graph.nodes)
+      allEdges = concatEdges(allEdges, graph.edges)
+    }
     return { nodes: allNodes, edges: allEdges }
   }, [combinedGraphData])
 

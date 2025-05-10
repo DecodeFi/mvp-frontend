@@ -1,3 +1,5 @@
+import { handleEdges } from "./handleEdges"
+
 export function buildGraphFromSnapshot(snapshotData, setChosenAddress, xOffset = 0) {
   if (!snapshotData || !snapshotData.nodes?.length || !snapshotData.traces?.length) {
     return { nodes: [], edges: [] }
@@ -17,29 +19,9 @@ export function buildGraphFromSnapshot(snapshotData, setChosenAddress, xOffset =
     },
   }))
 
-  const edges = snapshotData.traces.map((trace, idx) => {
-    const { from_addr, to_addr, count } = trace
-
-    const color = "#FF0071"
-    return {
-      id: `${from_addr}-${to_addr}-call`,
-      source: from_addr,
-      sourceHandle: "source",
-      targetHandle: "target",
-      animated: true,
-      markerEnd: {
-        type: "arrowclosed",
-        color,
-        width: 20,
-        height: 20,
-      },
-      style: {
-        stroke: color,
-      },
-      target: to_addr,
-      label: `call`,
-    }
-  })
+  
+  
+  let edges = handleEdges(snapshotData.traces)
 
   return { nodes, edges }
 }
