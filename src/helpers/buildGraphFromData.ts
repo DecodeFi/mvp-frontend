@@ -18,9 +18,7 @@ export function buildGraphFromData(data, id?, setChosenAddress?, offset?) {
       tx_hash: hash,
       trace_id,
     } = tx
-
-    console.log(tx)
-
+    
     // Assign from node
     if (from !== "" && !nodesMap.has(from)) {
       const yFrom = id === from ? 100 : yOffsetFrom * yStep
