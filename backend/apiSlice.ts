@@ -98,6 +98,7 @@ export const blockApi = createApi({
 export const {
   useGetTxsQuery,
   useGetAddressQuery,
+  useLazyGetAddressQuery,
   useGetLatestBlockNumberQuery,
   useGetAddressInfoQuery,
   useGetSecurityCheckQuery,
