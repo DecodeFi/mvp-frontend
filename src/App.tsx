@@ -29,7 +29,7 @@ function App() {
   const [toFilter, setToFilter] = useState<string[]>([])
   const [actionFilter, setActionFilter] = useState("")
   const [searchInput, setSearchInput] = useState("")
-  const [searchValue, setSearchValue] = useState("0xc7bbec68d12a0d1830360f8ec58fa599ba1b0e9b")
+  const [searchValue, setSearchValue] = useState("0x1f98431c8ad98523631ae4a59f267346ea31f984")
   const [viewAddress, setViewAddress] = useState<string>("")
   const [cachedData, setCachedData] = useState<any[]>([])
   const [snapShotName, setSnapShotName] = useState<string>("")
@@ -86,7 +86,7 @@ function App() {
 
   const combinedGraphData = useMemo(() => {
     return cachedData?.map((item, index) => {
-      return buildGraphFromData(item.data, item.focus, setViewAddress, {y: 1000 * index, x: 1000 * index})
+      return buildGraphFromData(item.data, item.focus, setViewAddress, {y: 1000 * index, x: 0})
     })
   }, [cachedData])
   const filteredData: IBlockData[] = rawData?.filter((tx) => {
