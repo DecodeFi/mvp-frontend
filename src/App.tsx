@@ -53,11 +53,11 @@ function App() {
     searchType === "tx" ? searchValue : skipToken
   )
   const { data: addressDataRaw, isLoading: isLoadingAddressDataRaw } = useGetAddressQuery(
-    searchType === "address" ? searchValue : skipToken
+    searchType === "address" ? searchValue?.toLowerCase() : skipToken
   )
 
   const { data: snapshotData } = useGetSnapshotQuery(
-    searchType === "snapshot" ? searchValue : skipToken
+    searchType === "snapshot" ? searchValue?.toLowerCase() : skipToken
   )
   const parsedTxData = useMemo(() => {
     try {
