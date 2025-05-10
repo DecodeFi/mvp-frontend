@@ -223,12 +223,12 @@ export const NodeHeaderAddNodeIn = () => {
     if (!node?.data?.label) return
     const result = await trigger(node.data.label as string).unwrap()
     const { nodes, edges } = buildGraphFromData(result?.traces, id, undefined, 300)
-    const outgoingEdges = edges.filter((edge) => edge.target === node.data.label)
-    const targets = outgoingEdges.map((edge) => edge.source)
-    const filteredNodes = nodes.filter((n) => targets.includes(n.id))
+    const incomingEdges = edges.filter((edge) => edge.target === node.data.label)
 
+    const targets = incomingEdges.map((edge) => edge.source)
+    const filteredNodes = nodes.filter((n) => targets.includes(n.id))
     setNodes((oldNodes) => [...oldNodes, ...filteredNodes])
-    setEdges((oldEdges) => [...oldEdges, ...outgoingEdges])
+    setEdges((oldEdges) => [...oldEdges, ...incomingEdges])
   }, [node, trigger, setNodes, setEdges])
 
   return (

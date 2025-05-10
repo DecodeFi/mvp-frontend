@@ -18,7 +18,7 @@ export function buildGraphFromData(data, id?, setChosenAddress?, offset?) {
       tx_hash: hash,
       trace_id,
     } = tx
-    
+
     // Assign from node
     if (from !== "" && !nodesMap.has(from)) {
       const yFrom = id === from ? 100 : yOffsetFrom * yStep
@@ -39,7 +39,7 @@ export function buildGraphFromData(data, id?, setChosenAddress?, offset?) {
     if (storage !== "" && !nodesMap.has(storage)) {
       const yFrom = id === storage ? 100 : yOffsetFrom * yStep
       const xTo = id === storage ? 100 : -300
-      positionsMap.set(storage, { x: xTo + offset * 5, y: yFrom + 300 })
+      positionsMap.set(storage, { x: xTo + offset * 2, y: yFrom + 300 })
       nodesMap.set(storage, {
         id: storage,
         type: "nodeHeaderNode",
@@ -54,7 +54,7 @@ export function buildGraphFromData(data, id?, setChosenAddress?, offset?) {
     // Assign to node
     if (to !== "" && !nodesMap.has(to)) {
       const yTo = yOffsetTo * yStep
-      positionsMap.set(to, { x: 500 + offset * 5, y: yTo })
+      positionsMap.set(to, { x: 500 + offset * 2, y: yTo })
       nodesMap.set(to, {
         id: to,
         type: "nodeHeaderNode",
@@ -131,7 +131,7 @@ export function buildGraphFromData(data, id?, setChosenAddress?, offset?) {
       })
     }
   }
-  
+
   let edges = Array.from(edgesMap.values())
 
   return {
