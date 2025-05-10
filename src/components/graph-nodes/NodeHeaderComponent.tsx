@@ -19,7 +19,6 @@ import wethIcon from "@/assets/wethIcon.svg"
 import daiIcon from "@/assets/daiIcon.svg"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { ShieldEllipsis } from "lucide-react"
 import {
   Tooltip,
   TooltipContent,
@@ -74,28 +73,28 @@ const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
   const [hovered, setHovered] = useState(false)
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.5 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.7 }}
+    <BaseNode
+      selected={selected}
+      className="px-3 py-2"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      <BaseNode
-        selected={selected}
-        className="px-3 py-2"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+      {hovered && (
+        <>
+          <div className="absolute z-10 left-[-24px] top-1/2 -translate-y-1/2">
+            <NodeHeaderAddNodeIn />
+          </div>
+          <div className="absolute z-10 right-[-24px] top-1/2 -translate-y-1/2">
+            <NodeHeaderAddNodeOut />
+          </div>
+        </>
+      )}
+      <Handle type="target" id="target" position={Position.Left} />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.7 }}
       >
-        {hovered && (
-          <>
-            <div className="absolute z-10 left-[-24px] top-1/2 -translate-y-1/2">
-              <NodeHeaderAddNodeIn />
-            </div>
-            <div className="absolute z-10 right-[-24px] top-1/2 -translate-y-1/2">
-              <NodeHeaderAddNodeOut />
-            </div>
-          </>
-        )}
-        <Handle type="target" id="target" position={Position.Left} />
         <NodeHeader style={{ cursor: "grab" }} className="drag-handle -mx-3 -mt-2 border-b">
           <NodeHeaderIcon>
             {icon ? <img width={16} height={16} src={icon} /> : <Rocket />}
@@ -133,9 +132,9 @@ const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
             </Tooltip>
           </TooltipProvider>
         </div>
-        <Handle type="source" id="source" position={Position.Right} />
-      </BaseNode>
-    </motion.div>
+      </motion.div>
+      <Handle type="source" id="source" position={Position.Right} />
+    </BaseNode>
   )
 })
 

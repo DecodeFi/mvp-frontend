@@ -15,7 +15,7 @@ export function buildGraphFromData(data, id?, setChosenAddress?, offset?) {
       to_addr: to,
       storage_addr: storage,
     } = tx
-    
+
     // Assign from node
     if (from !== "" && !nodesMap.has(from)) {
       positionsMap.set(from, { x: 0, y: 0 })
