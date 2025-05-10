@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/tooltip"
 
 function getSecurityLevelEmoji(score?: number): string {
-  if (score === undefined || score === null) return "🔴" // unknown = high risk
+  if (score === undefined || score === null || score < 0) return "🔴" // unknown = high risk
   if (score <= 3000) return "🟢" // good
   if (score <= 7000) return "🟡" // medium
   return "🔴" // bad
@@ -72,7 +72,7 @@ const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
   }
 
   const [hovered, setHovered] = useState(false)
-  console.log(securityCheckInfo, "securityCheckInfo")
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }}

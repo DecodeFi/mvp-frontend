@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, HTMLAttributes, ReactNode, useMemo } from "react"
+import { forwardRef, useCallback, HTMLAttributes, ReactNode, useMemo, useState } from "react"
 import { useNodeId, useReactFlow } from "@xyflow/react"
 import { EllipsisVertical, Trash } from "lucide-react"
 
@@ -11,7 +11,7 @@ import {
   DropdownMenuContent,
 } from "@/components/ui/dropdown-menu"
 import * as React from "react"
-import { useGetAddressQuery } from "../../../backend/apiSlice"
+import { useGetAddressQuery, useLazyGetAddressQuery } from "../../../backend/apiSlice"
 import { buildGraphFromData } from "@/helpers/buildGraphFromData"
 
 /* NODE HEADER -------------------------------------------------------------- */
@@ -189,26 +189,20 @@ NodeHeaderDeleteAction.displayName = "NodeHeaderDeleteAction"
 
 export const NodeHeaderAddNodeOut = () => {
   const id = useNodeId()
-  const { setNodes, setEdges, getNodes, getEdges, getNode } = useReactFlow()
+  const { setNodes, setEdges, getNode } = useReactFlow()
+  const [trigger] = useLazyGetAddressQuery()
   const node = getNode(id)
 
-  const { data: addressDataRaw } = useGetAddressQuery(node?.data?.label as string)
-
-  const { nodes, edges } = useMemo(
-    () => buildGraphFromData(addressDataRaw?.traces),
-    [addressDataRaw]
-  )
-
-  const outgoingEdges = edges.filter((edge) => edge.source === node?.data?.label)
-  const targets = outgoingEdges.map((edge) => edge.target)
-
-  const filteredNodes = nodes.filter((n) => targets.includes(n.id))
-
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback(async () => {
+    if (!node?.data?.label) return
+    const result = await trigger(node.data.label as string).unwrap()
+    const { nodes, edges } = buildGraphFromData(result?.traces, id, undefined, 500)
+    const outgoingEdges = edges.filter((edge) => edge.source === node.data.label)
+    const targets = outgoingEdges.map((edge) => edge.target)
+    const filteredNodes = nodes.filter((n) => targets.includes(n.id))
     setNodes((oldNodes) => [...oldNodes, ...filteredNodes])
     setEdges((oldEdges) => [...oldEdges, ...outgoingEdges])
-  }, [filteredNodes, outgoingEdges, setNodes, setEdges])
-
+  }, [node, trigger, setNodes, setEdges])
   return (
     <NodeHeaderAction
       onClick={handleClick}
@@ -221,25 +215,21 @@ export const NodeHeaderAddNodeOut = () => {
 }
 export const NodeHeaderAddNodeIn = () => {
   const id = useNodeId()
-  const { setNodes, setEdges, getNodes, getEdges, getNode } = useReactFlow()
+  const { setNodes, setEdges, getNode } = useReactFlow()
+  const [trigger] = useLazyGetAddressQuery()
   const node = getNode(id)
 
-  const { data: addressDataRaw } = useGetAddressQuery(node?.data?.label as string)
+  const handleClick = useCallback(async () => {
+    if (!node?.data?.label) return
+    const result = await trigger(node.data.label as string).unwrap()
+    const { nodes, edges } = buildGraphFromData(result?.traces, id, undefined, 300)
+    const outgoingEdges = edges.filter((edge) => edge.target === node.data.label)
+    const targets = outgoingEdges.map((edge) => edge.source)
+    const filteredNodes = nodes.filter((n) => targets.includes(n.id))
 
-  const { nodes, edges } = useMemo(
-    () => buildGraphFromData(addressDataRaw?.traces),
-    [addressDataRaw]
-  )
-
-  const incomingEdges = edges.filter((edge) => edge.target === node?.data?.label)
-
-  const sources = incomingEdges.map((edge) => edge.source)
-  const filteredNodes = nodes.filter((node) => sources.includes(node.id))
-
-  const handleClick = useCallback(() => {
     setNodes((oldNodes) => [...oldNodes, ...filteredNodes])
-    setEdges((oldEdges) => [...oldEdges, ...incomingEdges])
-  }, [filteredNodes, incomingEdges, setNodes, setEdges])
+    setEdges((oldEdges) => [...oldEdges, ...outgoingEdges])
+  }, [node, trigger, setNodes, setEdges])
 
   return (
     <NodeHeaderAction
