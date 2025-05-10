@@ -19,9 +19,10 @@ export function buildGraphFromSnapshot(snapshotData, setChosenAddress, xOffset =
 
   const edges = snapshotData.traces.map((trace, idx) => {
     const { from_addr, to_addr, count } = trace
+
     const color = "#FF0071"
     return {
-      id: `${from_addr}`,
+      id: `${from_addr}-${to_addr}-call`,
       source: from_addr,
       sourceHandle: "source",
       targetHandle: "target",
@@ -36,7 +37,7 @@ export function buildGraphFromSnapshot(snapshotData, setChosenAddress, xOffset =
         stroke: color,
       },
       target: to_addr,
-      label: `${count}`,
+      label: `call`,
     }
   })
 

@@ -3,7 +3,7 @@ export function buildGraphFromData(data, id?, setChosenAddress?, offset?) {
 
   const nodesMap = new Map()
   const positionsMap = new Map()
-  const edges = []
+  const edgesMap = new Map<string, any>()
 
   let yOffsetFrom = 0
   let yOffsetTo = 0
@@ -18,7 +18,7 @@ export function buildGraphFromData(data, id?, setChosenAddress?, offset?) {
       tx_hash: hash,
       trace_id,
     } = tx
-
+    
     // Assign from node
     if (from !== "" && !nodesMap.has(from)) {
       const yFrom = id === from ? 100 : yOffsetFrom * yStep
@@ -68,9 +68,11 @@ export function buildGraphFromData(data, id?, setChosenAddress?, offset?) {
 
     let color = "#FF0071"
     let edge_id = `${from}-${to}-${action}`
+    let reverse_edge_id = `${to}-${from}-${action}`
     let source = from
     if (action === "delegate_call") {
       edge_id = `${storage}-${to}-${action}`
+      reverse_edge_id = `${to}-${storage}-${action}`
       source = storage
       color = "#0079FF"
     } else if (action === "create" || action == "create2") {
@@ -81,25 +83,56 @@ export function buildGraphFromData(data, id?, setChosenAddress?, offset?) {
       continue
     }
 
-    edges.push({
-      id: edge_id,
-      source: source,
-      sourceHandle: "source",
-      targetHandle: "target",
-      animated: true,
-      markerEnd: {
-        type: "arrowclosed",
-        color: color,
-        width: 20,
-        height: 20,
-      },
-      style: {
-        stroke: color,
-      },
-      target: to,
-      label: `${action}`,
-    })
+    if (edgesMap.has(reverse_edge_id)) {
+      // got reverse edge, merge them both
+      edgesMap.set(reverse_edge_id, {
+        id: reverse_edge_id,
+        source: source,
+        sourceHandle: "source",
+        targetHandle: "target",
+        animated: false,
+        markerEnd: {
+          type: "arrowclosed",
+          color: color,
+          width: 20,
+          height: 20,
+        },
+        markerStart: {
+          type: "arrowclosed",
+          color: color,
+          width: 20,
+          height: 20,
+        },
+        style: {
+          stroke: color,
+        },
+        target: to,
+        label: `${action}`,
+      })
+    } else {
+      // no reverse yet (or at all)
+      edgesMap.set(edge_id, {
+        id: edge_id,
+        source: source,
+        sourceHandle: "source",
+        targetHandle: "target",
+        animated: true,
+        markerEnd: {
+          type: "arrowclosed",
+          color: color,
+          width: 20,
+          height: 20,
+        },
+        style: {
+          stroke: color,
+        },
+        target: to,
+        label: `${action}`,
+      })
+    }
   }
+  
+  let edges = Array.from(edgesMap.values())
 
   return {
     nodes: Array.from(nodesMap.values()),
