@@ -59,7 +59,6 @@ function App() {
   const { data: snapshotData } = useGetSnapshotQuery(
     searchType === "snapshot" ? searchValue : skipToken
   )
-  console.log(snapshotData, "snapshotData")
   const parsedTxData = useMemo(() => {
     try {
       if (txDataRaw?.result) return JSON.parse(txDataRaw.result)
@@ -84,7 +83,7 @@ function App() {
     }
   }, [rawData])
 
-  const beba = useMemo(() => {
+  const combinedGraphData = useMemo(() => {
     return cachedData?.map((item, index) => {
       return buildGraphFromData(item, searchValue, setViewAddress, index * 100)
     })
@@ -97,10 +96,10 @@ function App() {
     )
   })
   const { nodes, edges } = useMemo(() => {
-    const allNodes = beba?.flatMap(({ nodes }) => nodes)
-    const allEdges = beba?.flatMap(({ edges }) => edges)
+    const allNodes = combinedGraphData?.flatMap(({ nodes }) => nodes)
+    const allEdges = combinedGraphData?.flatMap(({ edges }) => edges)
     return { nodes: allNodes, edges: allEdges }
-  }, [beba])
+  }, [combinedGraphData])
 
   useEffect(() => {
     if (blockData || addressDataRaw) setNodes(nodes)
@@ -138,7 +137,6 @@ function App() {
         snapshot_name: snapshotName,
         snapshot_nodes,
       }
-      console.log(body, "body")
       try {
         const res = await fetch("https://45.144.31.133:3443/api/addresses/snapshot", {
           method: "POST",
@@ -188,20 +186,7 @@ function App() {
           setSnapShotName(e.target.value)
         }}
       />
-      <Button
-        style={{ width: "8rem", margin: "auto", marginTop: "1rem" }}
-        variant="outline"
-        onClick={() => {
-          setCachedData([])
-          setNodes([])
-          setEdges([])
-          setSearchValue("")
-          setSearchInput("")
-          setViewAddress("")
-        }}
-      >
-        Clear Graph
-      </Button>
+
       <div className="flex items-center justify-center gap-6 flex-col sm:flex-row">
         <FilterAddress
           addresses={rawData?.map(({ from_addr }) => from_addr)}
@@ -213,6 +198,20 @@ function App() {
           onSelect={setToFilter}
           type="to"
         />
+
+        <Button
+          variant="outline"
+          onClick={() => {
+            setCachedData([])
+            setNodes([])
+            setEdges([])
+            setSearchValue("")
+            setSearchInput("")
+            setViewAddress("")
+          }}
+        >
+          Clear Graph
+        </Button>
       </div>
       <div className="w-full flex justify-center">
         <div className={css.graphContainer}>
