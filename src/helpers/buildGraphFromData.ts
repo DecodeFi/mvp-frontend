@@ -20,7 +20,7 @@ export function buildGraphFromData(data, id?, setChosenAddress?, offset?) {
     } = tx
 
     // Assign from node
-    if (!nodesMap.has(from)) {
+    if (from !== "" && !nodesMap.has(from)) {
       const yFrom = id === from ? 100 : yOffsetFrom * yStep
       const xTo = id === from ? 100 : -300
       positionsMap.set(from, { x: xTo, y: yFrom + 300 })
@@ -31,11 +31,12 @@ export function buildGraphFromData(data, id?, setChosenAddress?, offset?) {
         dragHandle: ".drag-handle",
         position: positionsMap.get(from),
       })
+
       yOffsetFrom += 1
     }
 
     // Assign from node
-    if (!nodesMap.has(storage)) {
+    if (storage !== "" && !nodesMap.has(storage)) {
       const yFrom = id === storage ? 100 : yOffsetFrom * yStep
       const xTo = id === storage ? 100 : -300
       positionsMap.set(storage, { x: xTo + offset * 5, y: yFrom + 300 })
@@ -46,11 +47,12 @@ export function buildGraphFromData(data, id?, setChosenAddress?, offset?) {
         dragHandle: ".drag-handle",
         position: positionsMap.get(storage),
       })
+
       yOffsetFrom += 1
     }
 
     // Assign to node
-    if (!nodesMap.has(to)) {
+    if (to !== "" && !nodesMap.has(to)) {
       const yTo = yOffsetTo * yStep
       positionsMap.set(to, { x: 500 + offset * 5, y: yTo })
       nodesMap.set(to, {
@@ -60,6 +62,7 @@ export function buildGraphFromData(data, id?, setChosenAddress?, offset?) {
         dragHandle: ".drag-handle",
         position: positionsMap.get(to),
       })
+
       yOffsetTo += 1
     }
 
