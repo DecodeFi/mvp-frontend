@@ -4,8 +4,6 @@ import { handleEdges } from "./handleEdges"
 export function buildGraphFromData(data, id?, setChosenAddress?, offset?) {
   if (!data?.length) return { nodes: [], edges: [] }
 
-  console.log(data, id, offset)
-
   const nodesMap = new Map()
   const positionsMap = new Map()
 
