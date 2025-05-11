@@ -4,7 +4,6 @@ import { coy } from "react-syntax-highlighter/dist/cjs/styles/prism"
 import { FilterContracts, SearchBar } from "@/components"
 import { ContractDiffViewer } from "@/components/CodeViewer/DiffViewer"
 import { useGetAddressInfoQuery, useGetAddressQuery } from "../../../backend/apiSlice"
-import { skipToken } from "@reduxjs/toolkit/query"
 
 interface ContractSourceViewerProps {
   sources: Record<string, { content?: string }>
@@ -82,6 +81,7 @@ export function ContractSourceViewer({ sources }: ContractSourceViewerProps) {
               <FilterContracts
                 contracts={Object.keys(parsedSources)}
                 selectedContract={compareToContract}
+                placeHolder="Choose the file"
                 onSelectContract={setCompareToContract}
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
@@ -117,7 +117,7 @@ export function ContractSourceViewer({ sources }: ContractSourceViewerProps) {
             borderRadius: "15px",
           }}
         >
-          <ContractDiffViewer oldSource={compareToContent} newSource={currentFileContent} />
+          <ContractDiffViewer oldSource={currentFileContent} newSource={compareToContent} />
         </div>
       )}
     </div>

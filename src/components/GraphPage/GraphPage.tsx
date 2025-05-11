@@ -179,20 +179,33 @@ export function GraphPage() {
       {(isLoadingBLockData || isLoadingAddressDataRaw || isLoadingTxDataRaw) && (
         <div>loading...</div>
       )}
+      <div className="flex flex-col gap-2">
+        <input
+          value={snapShotName}
+          placeholder="insert the snapshot name"
+          style={{
+            width: "30%",
+            margin: "auto",
+            backgroundColor: "#f5f5f5",
+            padding: "0.5rem",
+            borderRadius: "5px",
+          }}
+          onChange={(e) => {
+            setSnapShotName(e.target.value)
+          }}
+        />
+        <p className="text-center">
+          Set the graph nodes the way you want. <br />
+          Then insert the name of your snapshot and click "send snapshot". <br /> You will be
+          able to get that snapshot in the search bar afterwards
+        </p>
+      </div>
       <Button
         style={{ width: "8rem", margin: "auto" }}
         onClick={() => sendSnapshot(snapShotName, nodes_)}
       >
         send snapshot
       </Button>
-      <input
-        value={snapShotName}
-        placeholder="insert the snapshot name"
-        style={{ width: "30%", margin: "auto", backgroundColor: "#f5f5f5" }}
-        onChange={(e) => {
-          setSnapShotName(e.target.value)
-        }}
-      />
 
       <div className="flex items-center justify-center gap-6 flex-col sm:flex-row">
         <FilterAddress
@@ -229,6 +242,7 @@ export function GraphPage() {
             onEdgesChange={onEdgesChange}
             onNodesChange={onNodesChange}
             nodes={nodes_}
+            minZoom={0.1}
             edges={edges_}
             nodeTypes={nodeTypes}
             onInit={(instance) => instance.setViewport({ x: 300, y: 0, zoom: 0.5 })}
