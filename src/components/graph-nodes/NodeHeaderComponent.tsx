@@ -12,7 +12,7 @@ import {
 import { BaseNode } from "@/components/graph-nodes/BaseNode"
 import { CopyButton } from "@/components/ui/CopyButton"
 import { truncateAddress } from "@/helpers/truncateAddress"
-import { useGetAddressInfoQuery, useGetSecurityCheckQuery } from "../../../backend/apiSlice"
+import { AddressInfo, useGetAddressInfoQuery, useGetSecurityCheckQuery } from "../../../backend/apiSlice"
 import tetherIcon from "@/assets/tetherIcon.svg"
 import uniswapIcon from "@/assets/uniswapIcon.svg"
 import wethIcon from "@/assets/wethIcon.svg"
@@ -45,6 +45,19 @@ function getScoreMessage(score?: number): string {
   }
 
   return `Contract's security score is ${score}.`
+}
+
+function getNodeName(addressData: AddressInfo): string {
+  if (addressData === undefined) {
+    return "Unknown address"
+  }
+  if (addressData.isVerified) {
+    return addressData.contractName
+  } else if (!addressData.isContract) {
+    return "Externally owned account"
+  } else {
+    return "Contract (no source code)"
+  }
 }
 
 const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
@@ -115,7 +128,7 @@ const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
             {icon ? <img width={16} height={16} src={icon} /> : <Rocket />}
           </NodeHeaderIcon>
           <NodeHeaderTitle>
-            <div>{addressData?.contractName || "Unknown Contract"}</div>
+            <div>{getNodeName(addressData)}</div>
           </NodeHeaderTitle>
           <NodeHeaderDeleteAction />
         </NodeHeader>
