@@ -80,7 +80,6 @@ function App() {
           : []
 
   useEffect(() => {
-    console.log("useEffect!", rawData)
     if (rawData?.length) {
       setCachedData((prev) => [...prev, {data: rawData, focus: searchValue}])
     }
