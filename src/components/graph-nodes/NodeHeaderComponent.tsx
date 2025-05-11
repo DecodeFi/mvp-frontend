@@ -40,7 +40,7 @@ function getNodeName(addressData: AddressInfo): string {
   if (addressData.isVerified) {
     return addressData.contractName
   } else if (!addressData.isContract) {
-    return "Externaly owned account"
+    return "Externally owned account"
   } else {
     return "Contract (no source code)"
   }
