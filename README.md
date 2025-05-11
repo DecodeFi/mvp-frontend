@@ -1,12 +1,70 @@
-# React + Vite
+# ⚡ GraphChain
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Интерактивный граф для визуализации блокчейн-данных.  
+Создан с использованием React, TypeScript, Vite, Tailwind CSS и React Flow.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🔎 Поиск по `address`, `tx`, `block`, `snapshot name`
+- 📈 Визуализация графа с помощью `@xyflow/react`
+- ⚙️ Фильтрация по `from`, `to`, `action`
+- 💾 Возможность сохранения snapshot'ов и повторного вызова
+- 🧠 Поддержка кастомных нод с информацией о безопасности
 
-## Expanding the ESLint configuration
+## 🧱 Стек технологий
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **React 19 + Vite**
+- **TypeScript**
+- **Redux Toolkit Query** для асинхронных API запросов
+- **React Flow (@xyflow/react)** для визуализации графов
+- **Tailwind CSS** для стилизации
+- **Framer Motion** для анимаций
+- **Radix UI** — dropdowns, tooltips
+- **Lucide Icons**
+
+## 🛠️ Установка
+
+```bash
+# 1. Клонируйте репозиторий
+git clone https://github.com/DecodeFi/mvp-frontend.git
+cd mvp-frontend
+
+# 2. Установите зависимости. 
+# Так как в зависимостях установлен React 19, есть конфликты, поэтому с флагом --legacy-peer-deps
+ или npm install --legacy-peer-deps
+
+# 3. Запустите проект
+npm run dev
+
+# Структура проекта:
+├── backend/
+│   └── apiSlice.ts         # RTK Query endpoints
+│
+├── redux/
+│   └── store.ts            # Конфигурация Redux store
+│
+├── src/
+│   ├── assets/             # Иконки и графические ресурсы
+│   │
+│   ├── components/
+│   │   ├── graph-nodes/    # Компоненты узлов графа (NodeHeader и др.)
+│   │   ├── graph-filters/  # UI-фильтры по from/to-адресам
+│   │   ├── ContractTable/  # Отображение деталей адреса
+│   │   ├── Header/         # Хедер страницы
+│   │   ├── SearchBar/      # Компонент поиска
+│   │   └── ui/             # Общие UI-компоненты (Button и т.п.)
+│   │
+│   ├── helpers/
+│   │   ├── buildGraphFromData.ts     # Генерация графа из traces
+│   │   ├── buildGraphFromSnapshot.ts # Генерация из snapshot
+│   │   ├── detectSearchType.ts       # Определение типа ввода
+│   │   ├── truncateAddress.ts        # Утилита сокращения адреса
+│   │
+│   ├── hooks/
+│   │   └── useBalance.ts    # Пользовательские React-хуки
+│   │
+│   └── lib/                # Вспомогательные библиотеки и утилиты
+│
+├── pages/
+│   └── GraphPage.tsx       # Главный компонент визуализации графа
+
