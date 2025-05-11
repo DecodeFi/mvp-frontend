@@ -83,12 +83,6 @@ export function GraphPage() {
     }
   }, [rawData])
 
-  const combinedGraphData = useMemo(() => {
-    return cachedData?.map((item, index) => {
-      return buildGraphFromData(item, searchValue, setViewAddress, index * 100)
-    })
-  }, [cachedData])
-
   const filteredData: IBlockData[] = cachedData
     ?.flatMap((item) => item)
     .filter((tx) => {
@@ -98,13 +92,18 @@ export function GraphPage() {
         (!actionFilter || tx.action === actionFilter)
       )
     })
-  console.log(filteredData, "filteredData")
+  const filteredGraphData = useMemo(() => {
+    return filteredData?.length
+      ? [buildGraphFromData(filteredData, searchValue, setViewAddress, 0)]
+      : []
+  }, [filteredData])
   const { nodes, edges } = useMemo(() => {
-    const allNodes = combinedGraphData?.flatMap(({ nodes }) => nodes)
-    const allEdges = combinedGraphData?.flatMap(({ edges }) => edges)
+    const allNodes = filteredGraphData?.flatMap(({ nodes }) => nodes)
+
+    const allEdges = filteredGraphData?.flatMap(({ edges }) => edges)
 
     return { nodes: allNodes, edges: allEdges }
-  }, [combinedGraphData, fromFilter, toFilter, actionFilter])
+  }, [filteredGraphData, fromFilter, toFilter, actionFilter])
 
   useEffect(() => {
     if (blockData || addressDataRaw) {
@@ -197,12 +196,12 @@ export function GraphPage() {
 
       <div className="flex items-center justify-center gap-6 flex-col sm:flex-row">
         <FilterAddress
-          addresses={filteredData.map(({ from_addr }) => from_addr)}
+          addresses={cachedData?.flatMap((item) => item).map(({ from_addr }) => from_addr)}
           onSelect={setFromFilter}
           type="from"
         />
         <FilterAddress
-          addresses={filteredData.map(({ to_addr }) => to_addr)}
+          addresses={cachedData?.flatMap((item) => item).map(({ to_addr }) => to_addr)}
           onSelect={setToFilter}
           type="to"
         />
