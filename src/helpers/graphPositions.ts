@@ -56,6 +56,7 @@ export function calcGraphPositions(nodes, edges, initialNode, offset) {
 
     if (!graph.has(initialNode)) {
         console.log("WARNING:", initialNode, "is not among the edges!", edges)
+        return
     }
 
     let xPos = new Map<string, number>();

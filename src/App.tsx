@@ -29,7 +29,7 @@ function App() {
   const [toFilter, setToFilter] = useState<string[]>([])
   const [actionFilter, setActionFilter] = useState("")
   const [searchInput, setSearchInput] = useState("")
-  const [searchValue, setSearchValue] = useState("0x1f98431c8ad98523631ae4a59f267346ea31f984")
+  const [searchValue, setSearchValue] = useState("") // FIXME: revaluated even after "clear graph" click!
   const [viewAddress, setViewAddress] = useState<string>("")
   const [cachedData, setCachedData] = useState<any[]>([])
   const [snapShotName, setSnapShotName] = useState<string>("")
@@ -53,6 +53,7 @@ function App() {
   const { data: txDataRaw, isLoading: isLoadingTxDataRaw } = useGetTxsQuery(
     searchType === "tx" ? searchValue : skipToken
   )
+
   const { data: addressDataRaw, isLoading: isLoadingAddressDataRaw } = useGetAddressQuery(
     searchType === "address" ? searchValue?.toLowerCase() : skipToken
   )
@@ -79,6 +80,7 @@ function App() {
           : []
 
   useEffect(() => {
+    console.log("useEffect!", rawData)
     if (rawData?.length) {
       setCachedData((prev) => [...prev, {data: rawData, focus: searchValue}])
     }
@@ -211,7 +213,7 @@ function App() {
             setCachedData([])
             setNodes([])
             setEdges([])
-            setSearchValue("")
+            setSearchValue("") // FIXME: conflicts with useState above (see FIXME comment there)
             setSearchInput("")
             setViewAddress("")
           }}
