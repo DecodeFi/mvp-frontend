@@ -26,11 +26,25 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
+const ERR_SCORE_THRESH = 0
+const LOW_SCORE_THRESH = 2000
+const MEDIUM_SCORE_THRESH = 5000
+
 function getSecurityLevelEmoji(score?: number): string {
-  if (score === undefined || score === null || score < 0) return "🔴" // unknown = high risk
-  if (score <= 3000) return "🟢" // good
-  if (score <= 7000) return "🟡" // medium
+  if (score === undefined || score === null || score < ERR_SCORE_THRESH) return "⚫" // unknown = high risk
+  if (score < LOW_SCORE_THRESH) return "🟢" // good
+  if (score < MEDIUM_SCORE_THRESH) return "🟡" // medium
   return "🔴" // bad
+}
+
+function getScoreMessage(score?: number): string {
+  if (score === undefined) {
+    return "No security check was done for this contract."
+  } else if (score < ERR_SCORE_THRESH) {
+    return "Security check failed for this contract."
+  }
+
+  return `Contract's security score is ${score}.`
 }
 
 function getNodeName(addressData: AddressInfo): string {
@@ -56,14 +70,15 @@ const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
   }
   let securityStatus
   switch (true) {
-    case securityCheckInfo?.score > 0 && securityCheckInfo?.score < 3500:
+    case securityCheckInfo?.score >= ERR_SCORE_THRESH && securityCheckInfo?.score < LOW_SCORE_THRESH:
       securityStatus = "The contract is safe"
       break
-    case securityCheckInfo?.score > 3500 && securityCheckInfo?.score < 6500:
-      securityStatus = "The contract might be dangerous"
-      break
-    case securityCheckInfo?.score > 6500 || !securityCheckInfo?.score:
+    case (securityCheckInfo?.score >= LOW_SCORE_THRESH && securityCheckInfo?.score < MEDIUM_SCORE_THRESH) || 
+      securityCheckInfo?.score < ERR_SCORE_THRESH || !securityCheckInfo?.score:
       securityStatus = "Be careful"
+      break
+    case securityCheckInfo?.score >= MEDIUM_SCORE_THRESH:
+      securityStatus = "The contract might be dangerous"
       break
   }
 
@@ -138,8 +153,7 @@ const NodeHeaderComponent = memo(({ data, selected }: NodeProps) => {
               </TooltipTrigger>
               <TooltipContent>
                 <p>
-                  Contract's score is {securityCheckInfo?.score || "undefined"}.{" "}
-                  {securityStatus}
+                  {getScoreMessage(securityCheckInfo?.score)} {securityStatus}
                 </p>
               </TooltipContent>
             </Tooltip>
