@@ -56,7 +56,7 @@ export function GraphPage() {
     searchType === "address" ? searchValue?.toLowerCase() : skipToken
   )
 
-  const { data: snapshotData } = useGetSnapshotQuery(
+  const { data: snapshotData, isLoading: isLoadingSnapshotData } = useGetSnapshotQuery(
     searchType === "snapshot" ? searchValue?.toLowerCase() : skipToken
   )
   const parsedTxData = useMemo(() => {
@@ -176,9 +176,10 @@ export function GraphPage() {
           }}
         />
       </div>
-      {(isLoadingBLockData || isLoadingAddressDataRaw || isLoadingTxDataRaw) && (
-        <div>loading...</div>
-      )}
+      {(isLoadingBLockData ||
+        isLoadingAddressDataRaw ||
+        isLoadingTxDataRaw ||
+        isLoadingSnapshotData) && <div className="m-auto">loading...</div>}
       <div className="flex flex-col gap-2">
         <input
           value={snapShotName}
