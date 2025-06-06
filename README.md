@@ -2,8 +2,11 @@
 
 ## Check out our [demo video](https://drive.google.com/file/d/1V2eDSnKD8XKmrrpyPzoNU3cGX-uuC4Oq/view?usp=drive_link) to see how it all works
 
-Интерактивный граф для визуализации блокчейн-данных.  
-Создан с использованием React, TypeScript, Vite, Tailwind CSS и React Flow.
+Interactive Graph for Blockchain Data Visualization.  
+
+
+![telegram-cloud-photo-size-2-5316521372274526998-y](https://github.com/user-attachments/assets/4eef272b-fda4-494f-9b46-751f45597b75)
+
 
 ## 🚀 Features
 
