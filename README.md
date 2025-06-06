@@ -1,70 +1,76 @@
-# ⚡ GraphChain
+# ⚡ Note: our database subscription has expired, current deployed verison does not demonstrate what the project does.
+
+## Check out our [demo video](https://drive.google.com/file/d/1V2eDSnKD8XKmrrpyPzoNU3cGX-uuC4Oq/view?usp=drive_link) to see how it all works
 
 Интерактивный граф для визуализации блокчейн-данных.  
 Создан с использованием React, TypeScript, Vite, Tailwind CSS и React Flow.
 
 ## 🚀 Features
 
-- 🔎 Поиск по `address`, `tx`, `block`, `snapshot name`
-- 📈 Визуализация графа с помощью `@xyflow/react`
-- ⚙️ Фильтрация по `from`, `to`, `action`
-- 💾 Возможность сохранения snapshot'ов и повторного вызова
-- 🧠 Поддержка кастомных нод с информацией о безопасности
+ - 🔎 Search by address, tx, block, or snapshot name
 
-## 🧱 Стек технологий
+- 📈 Graph visualization using @xyflow/react
+
+- ⚙️ Filtering by from, to, and action
+
+- 💾 Snapshot saving and reloading support
+
+- 🧠 Custom nodes with security-related info
+
+## 🧱 Tech Stack
 
 - **React 19 + Vite**
 - **TypeScript**
-- **Redux Toolkit Query** для асинхронных API запросов
-- **React Flow (@xyflow/react)** для визуализации графов
-- **Tailwind CSS** для стилизации
-- **Framer Motion** для анимаций
+- **Redux Toolkit Query** for API queries
+- **React Flow (@xyflow/react)** for graph visualization
+- **Tailwind CSS** 
+- **Framer Motion** 
 - **Radix UI** — dropdowns, tooltips
 - **Lucide Icons**
 
-## 🛠️ Установка
+## 🛠️ Install
 
 ```bash
-# 1. Клонируйте репозиторий
+# 1. Clone the repository
 git clone https://github.com/DecodeFi/mvp-frontend.git
 cd mvp-frontend
 
-# 2. Установите зависимости. 
+# 2. Install dependencies.
 # Так как в зависимостях установлен React 19, есть конфликты, поэтому с флагом --legacy-peer-deps
  или npm install --legacy-peer-deps
 
-# 3. Запустите проект
+# 3. Run the project
 npm run dev
 
-# Структура проекта:
+# Folder structure:
 ├── backend/
 │   └── apiSlice.ts         # RTK Query endpoints
 │
 ├── redux/
-│   └── store.ts            # Конфигурация Redux store
+│   └── store.ts            # Redux store configuration
 │
 ├── src/
-│   ├── assets/             # Иконки и графические ресурсы
+│   ├── assets/             # Icons and visual assets
 │   │
 │   ├── components/
-│   │   ├── graph-nodes/    # Компоненты узлов графа (NodeHeader и др.)
-│   │   ├── graph-filters/  # UI-фильтры по from/to-адресам
-│   │   ├── ContractTable/  # Отображение деталей адреса
-│   │   ├── Header/         # Хедер страницы
-│   │   ├── SearchBar/      # Компонент поиска
-│   │   └── ui/             # Общие UI-компоненты (Button и т.п.)
+│   │   ├── graph-nodes/    # Graph node components (NodeHeader, etc.)
+│   │   ├── graph-filters/  # UI filters for from/to addresses
+│   │   ├── ContractTable/  # Address detail view
+│   │   ├── Header/         # Page header
+│   │   ├── SearchBar/      # Search input component
+│   │   └── ui/             # Common UI components (Button, etc.)
 │   │
 │   ├── helpers/
-│   │   ├── buildGraphFromData.ts     # Генерация графа из traces
-│   │   ├── buildGraphFromSnapshot.ts # Генерация из snapshot
-│   │   ├── detectSearchType.ts       # Определение типа ввода
-│   │   ├── truncateAddress.ts        # Утилита сокращения адреса
+│   │   ├── buildGraphFromData.ts     # Generate graph from traces
+│   │   ├── buildGraphFromSnapshot.ts # Generate graph from snapshot
+│   │   ├── detectSearchType.ts       # Determine input type
+│   │   ├── truncateAddress.ts        # Address shortening utility
 │   │
 │   ├── hooks/
-│   │   └── useBalance.ts    # Пользовательские React-хуки
+│   │   └── useBalance.ts    # Custom React hooks
 │   │
-│   └── lib/                # Вспомогательные библиотеки и утилиты
+│   └── lib/                # Shared libraries and utilities
 │
 ├── pages/
-│   └── GraphPage.tsx       # Главный компонент визуализации графа
+│   └── GraphPage.tsx       # Main graph visualization component
 
