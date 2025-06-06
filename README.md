@@ -1,4 +1,4 @@
-# ⚡ Note: our database subscription has expired, current deployed verison does not demonstrate what the project does.
+# ⚡ Note: our database subscription has expired, current deployed version does not demonstrate what the project does.
 
 ## Check out our [demo video](https://drive.google.com/file/d/1V2eDSnKD8XKmrrpyPzoNU3cGX-uuC4Oq/view?usp=drive_link) to see how it all works
 
